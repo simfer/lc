@@ -1,0 +1,97 @@
+<div class="container">
+	<div class="row row1">
+		<div class="col-md-6">
+			<div>&nbsp;</div>
+		</div>
+		<div class="col-md-6 vcenter">
+			<div>
+				<form name="form" (ngSubmit)="register()" #f="ngForm" novalidate>
+					<div class="row full-width">
+						<div class="col-md-12">
+							<md-form-field class="full-width"> <input
+								type="text" name="nickname" [(ngModel)]="model.nickname" mdInput
+								placeholder="Scegli un nickname"> </md-form-field>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-6">
+							<md-form-field class="full-width"> <input
+								type="password" name="password" [(ngModel)]="model.password" mdInput
+								placeholder="Password"> </md-form-field>
+						</div>
+						<div class="col-md-6">
+							<md-form-field class="full-width"> <input
+								type="password" name="password2" [(ngModel)]="model.password2"
+								mdInput placeholder="Ripeti password"> </md-form-field>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-4">
+							<md-form-field class="full-width"> <input
+								type="text" name="lastname" [(ngModel)]="model.lastname" mdInput
+								placeholder="Cognome"> </md-form-field>
+						</div>
+						<div class="col-md-4">
+							<md-form-field class="full-width"> <input
+								type="text" name="firstname" [(ngModel)]="model.firstname"
+								mdInput placeholder="Nome"> </md-form-field>
+						</div>
+						<div class="col-md-4">
+							<md-form-field class="full-width"> <input
+								type="text" name="gender" [(ngModel)]="model.gender" mdInput
+								placeholder="Sesso" [mdAutocomplete]="auto"> <md-autocomplete
+								#auto="mdAutocomplete"> <md-option
+								value="Maschio">Maschio</md-option> <md-option value="Femmina">Femmina</md-option>
+							</md-autocomplete> </md-form-field>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<md-form-field class="full-width"> <input
+								name="dateofbirth" mdInput [mdDatepicker]="picker"
+								placeholder="Data di nascita" [(ngModel)]="startDate"> <md-datepicker-toggle
+								mdSuffix [for]="picker"></md-datepicker-toggle> <md-datepicker
+								#picker [startAt]="startDate"></md-datepicker> </md-form-field>
+						</div>
+						<div class="col-md-6">
+							<md-form-field class="full-width"> <input
+								type="text" name="placeofbirth" [(ngModel)]="model.placeofbirth"
+								mdInput [formControl]="myControl" placeholder="Luogo di nascita"
+								[mdAutocomplete]="auto"> <md-autocomplete
+								#auto="mdAutocomplete"> <md-option
+								*ngFor="let city of filteredCities | async" [value]="city">
+							{{ city }} </md-option> </md-autocomplete> </md-form-field>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<md-form-field class="full-width"> <input
+								type="email" name="email" [(ngModel)]="model.email"
+								mdInput placeholder="E-Mail"> </md-form-field>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-12">
+							<button [disabled]="loading" md-raised-button>
+								Registrati
+								<md-icon>assignment_ind</md-icon>
+							</button>
+						</div>
+					</div>
+					<img *ngIf="loading"
+						src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+				</form>
+				Già registrato? Accedi da <a [routerLink]="['/login']"
+					class="btn btn-link">qui</a>
+
+			</div>
+		</div>
+
+	</div>
+</div>
+

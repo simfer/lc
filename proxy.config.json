@@ -1,0 +1,7 @@
+{
+	"/api/*": {
+		"target": "http://localhost:8080/lovechallenge/server",
+		"secure":false,
+		"logLevel":"debug"
+	}
+}

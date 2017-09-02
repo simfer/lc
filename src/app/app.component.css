@@ -1,0 +1,44 @@
+md-toolbar {
+    color: white;
+    background-color: #d84579;
+  }
+
+  .bgimg {
+    background-image: url('../assets/images/bkg2.jpg');
+    background-size: cover;
+    height: 400px;
+}
+
+.complete_footer {
+    clear: both;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: #F1EFEB;
+    background: #d84579;
+    overflow: hidden
+  }
+  
+  .complete_footer a {
+    color: #050505
+  }
+  .complete_footer h4 {
+    margin-bottom: 30px;
+    color: #fff
+  }
+  
+  .complete_footer li a {
+    opacity: 0.6
+  }
+  
+  .complete_footer li a:hover {
+    text-decoration: underline;
+    opacity: 0.8
+  }
+  
+  .complete_footer li {
+    margin-bottom: 8px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-right: 5px
+  }
