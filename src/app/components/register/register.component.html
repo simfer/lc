@@ -5,73 +5,111 @@
 		</div>
 		<div class="col-md-6 vcenter">
 			<div>
-				<form name="form" (ngSubmit)="register()" #f="ngForm" novalidate>
+				<form [formGroup]="myForm" (ngSubmit)="register2(myForm.value)" #f="ngForm" novalidate>
 					<div class="row full-width">
 						<div class="col-md-12">
-							<md-form-field class="full-width"> <input
-								type="text" name="nickname" [(ngModel)]="model.nickname" mdInput
-								placeholder="Scegli un nickname"> </md-form-field>
+							<md-form-field class="full-width">
+								<input
+									type="text" name="nickname" mdInput
+									formControlName="username" placeholder="Scegli un nickname">
+								<md-error *ngIf="myForm.controls['username'].hasError('required')">
+      								Il nickname è obbligatorio!
+    							</md-error>
+									
+							</md-form-field>
 						</div>
 					</div>
-
-
 					<div class="row">
 						<div class="col-md-6">
-							<md-form-field class="full-width"> <input
-								type="password" name="password" [(ngModel)]="model.password" mdInput
-								placeholder="Password"> </md-form-field>
+							<md-form-field class="full-width"> 
+								<input
+									type="password" name="password" mdInput
+									formControlName="password" placeholder="Password">
+								<md-error *ngIf="myForm.controls['password'].hasError('required')">
+      								La password è obbligatoria!
+    							</md-error>
+							</md-form-field>
 						</div>
 						<div class="col-md-6">
-							<md-form-field class="full-width"> <input
-								type="password" name="password2" [(ngModel)]="model.password2"
-								mdInput placeholder="Ripeti password"> </md-form-field>
+							<md-form-field class="full-width">
+								<input
+									type="password" name="ctrlPassword" mdInput
+									formControlName="ctrlPassword" placeholder="Ripeti password">
+								<md-error *ngIf="myForm.controls['ctrlPassword'].hasError('required')">
+      								La password è obbligatoria!
+    							</md-error>
+								<md-error *ngIf="notMatchingPasswords">
+      								Le password non corrispondono!
+    							</md-error>
+							</md-form-field>
 						</div>
 					</div>
 
 
 					<div class="row">
 						<div class="col-md-4">
-							<md-form-field class="full-width"> <input
-								type="text" name="lastname" [(ngModel)]="model.lastname" mdInput
-								placeholder="Cognome"> </md-form-field>
+							<md-form-field class="full-width">
+								<input
+									type="text" name="lastname" mdInput
+									formControlName="lastname" placeholder="Cognome">
+							</md-form-field>
 						</div>
 						<div class="col-md-4">
-							<md-form-field class="full-width"> <input
-								type="text" name="firstname" [(ngModel)]="model.firstname"
-								mdInput placeholder="Nome"> </md-form-field>
+							<md-form-field class="full-width">
+								<input
+									type="text" name="firstname" mdInput 
+									formControlName="firstname" placeholder="Nome">
+							</md-form-field>
 						</div>
 						<div class="col-md-4">
-							<md-form-field class="full-width"> <input
-								type="text" name="gender" [(ngModel)]="model.gender" mdInput
-								placeholder="Sesso" [mdAutocomplete]="auto"> <md-autocomplete
-								#auto="mdAutocomplete"> <md-option
-								value="Maschio">Maschio</md-option> <md-option value="Femmina">Femmina</md-option>
-							</md-autocomplete> </md-form-field>
+							<md-form-field class="full-width">
+								<input
+									type="text" name="gender" mdInput
+									formControlName="gender" placeholder="Sesso" [mdAutocomplete]="autoGender">
+									<md-autocomplete #autoGender="mdAutocomplete">
+										<md-option value="M">Maschio</md-option>
+										<md-option value="F">Femmina</md-option>
+									</md-autocomplete>
+							</md-form-field>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-6">
-							<md-form-field class="full-width"> <input
-								name="dateofbirth" mdInput [mdDatepicker]="picker"
-								placeholder="Data di nascita" [(ngModel)]="startDate"> <md-datepicker-toggle
-								mdSuffix [for]="picker"></md-datepicker-toggle> <md-datepicker
-								#picker [startAt]="startDate"></md-datepicker> </md-form-field>
+							<md-form-field class="full-width">
+								<input
+									[mdDatepicker]="picker" name="dateofbirth" mdInput 
+									[formControl]="dobControl" placeholder="Data di nascita">
+									<md-datepicker-toggle mdSuffix [for]="picker"></md-datepicker-toggle>
+									<md-datepicker #picker [startAt]="startDate"></md-datepicker>
+							</md-form-field>
 						</div>
 						<div class="col-md-6">
-							<md-form-field class="full-width"> <input
-								type="text" name="placeofbirth" [(ngModel)]="model.placeofbirth"
-								mdInput [formControl]="myControl" placeholder="Luogo di nascita"
-								[mdAutocomplete]="auto"> <md-autocomplete
-								#auto="mdAutocomplete"> <md-option
-								*ngFor="let city of filteredCities | async" [value]="city">
-							{{ city }} </md-option> </md-autocomplete> </md-form-field>
+							<md-form-field class="full-width">
+								<input
+									type="text" name="placeofbirth" mdInput 
+									[formControl]="pobControl" placeholder="Luogo di nascita"
+									formControlName="placeofbirth" [mdAutocomplete]="autoPob">
+									<md-autocomplete #autoPob="mdAutocomplete">
+										<md-option *ngFor="let city of filteredCities | async" [value]="city">
+											{{ city }}
+										</md-option>
+									</md-autocomplete>
+							</md-form-field>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<md-form-field class="full-width"> <input
-								type="email" name="email" [(ngModel)]="model.email"
-								mdInput placeholder="E-Mail"> </md-form-field>
+							<md-form-field class="full-width">
+								<input
+									type="email" name="email" mdInput 
+									formControlName="email" placeholder="E-Mail">
+								<md-error *ngIf="myForm.controls['email'].hasError('required')">
+      								L'email è obbligatoria!
+    							</md-error>
+								<md-error *ngIf="myForm.controls['email'].hasError('pattern')">
+      								Inserire una email valida!
+    							</md-error>
+							</md-form-field>
 						</div>
 					</div>
 
@@ -79,7 +117,6 @@
 						<div class="col-md-12">
 							<button [disabled]="loading" md-raised-button>
 								Registrati
-								<md-icon>assignment_ind</md-icon>
 							</button>
 						</div>
 					</div>
@@ -94,4 +131,3 @@
 
 	</div>
 </div>
-

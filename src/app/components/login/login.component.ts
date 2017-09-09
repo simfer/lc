@@ -10,7 +10,7 @@ import {AlertService} from '../../services/alert.service';
 })
 
 export class LoginComponent implements OnInit {
-  model: any = {username: 'admin', password: 'Admin123'};
+  model: any = {username: '', password: ''};
   loading = false;
   returnUrl: string;
 
@@ -28,6 +28,7 @@ export class LoginComponent implements OnInit {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
+
   goToRegister() {
     this.router.navigate(['/register']);
   }
@@ -37,8 +38,6 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(this.model.username, this.model.password)
       .subscribe(
       data => {
-        console.log('navigate');
-        console.log(this.returnUrl);
         this.router.navigate([this.returnUrl]);
       },
       error => {

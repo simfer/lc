@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {NgModule, LOCALE_ID} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AppRoutingModule} from './app-routing.module';
 import {HttpModule} from '@angular/http';
@@ -26,6 +26,9 @@ import {RegistrationService} from './services/registration.service';
 import { AlertService } from './services/alert.service';
 import { AuthGuard } from './guards/auth.guard';
 
+import { DatePipe } from '@angular/common';
+import { ConfirmregistrationComponent } from './components/confirmregistration/confirmregistration.component';
+
 
 @NgModule({
   declarations: [
@@ -33,7 +36,8 @@ import { AuthGuard } from './guards/auth.guard';
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    AlertComponent
+    AlertComponent,
+    ConfirmregistrationComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +55,13 @@ import { AuthGuard } from './guards/auth.guard';
     MdButtonModule,
     MdAutocompleteModule
   ],
-  providers: [AuthenticationService, RegistrationService, AuthGuard, AlertService],
+  providers: [
+    {provide: LOCALE_ID, useValue: 'it-IT'},
+    AuthenticationService,
+    RegistrationService,
+    AuthGuard,
+    AlertService,
+    DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
