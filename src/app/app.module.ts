@@ -1,4 +1,4 @@
-import {BrowserModule} from '@angular/platform-browser';
+import {BrowserModule,DomSanitizer} from '@angular/platform-browser';
 import {NgModule, LOCALE_ID} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AppRoutingModule} from './app-routing.module';
@@ -12,7 +12,10 @@ import {
   MdDatepickerModule,
   MdNativeDateModule,
   MdButtonModule,
-  MdAutocompleteModule
+  MdAutocompleteModule,
+  MdRadioModule,
+  MdIconModule,
+  MdIconRegistry
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
@@ -28,6 +31,8 @@ import { AuthGuard } from './guards/auth.guard';
 
 import { DatePipe } from '@angular/common';
 import { ConfirmregistrationComponent } from './components/confirmregistration/confirmregistration.component';
+import { SubscribeComponent } from './components/subscribe/subscribe.component';
+import { PaypalComponent } from './components/paypal/paypal.component';
 
 
 @NgModule({
@@ -37,7 +42,9 @@ import { ConfirmregistrationComponent } from './components/confirmregistration/c
     RegisterComponent,
     HomeComponent,
     AlertComponent,
-    ConfirmregistrationComponent
+    ConfirmregistrationComponent,
+    SubscribeComponent,
+    PaypalComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +60,9 @@ import { ConfirmregistrationComponent } from './components/confirmregistration/c
     MdDatepickerModule,
     MdNativeDateModule,
     MdButtonModule,
-    MdAutocompleteModule
+    MdAutocompleteModule,
+    MdRadioModule,
+    MdIconModule
   ],
   providers: [
     {provide: LOCALE_ID, useValue: 'it-IT'},
@@ -64,4 +73,8 @@ import { ConfirmregistrationComponent } from './components/confirmregistration/c
     DatePipe],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule {
+  constructor(mdIconRegistry: MdIconRegistry, domSanitizer: DomSanitizer){
+    mdIconRegistry.addSvgIconSet(domSanitizer.bypassSecurityTrustResourceUrl('./assets/mdi.svg')); // Or whatever path you placed mdi.svg at
+  }
+}

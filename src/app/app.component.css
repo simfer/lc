@@ -17,7 +17,7 @@ md-toolbar {
     background: #d84579;
     overflow: hidden
   }
-  
+
   .complete_footer a {
     color: #050505
   }
@@ -25,16 +25,16 @@ md-toolbar {
     margin-bottom: 30px;
     color: #fff
   }
-  
+
   .complete_footer li a {
     opacity: 0.6
   }
-  
+
   .complete_footer li a:hover {
     text-decoration: underline;
     opacity: 0.8
   }
-  
+
   .complete_footer li {
     margin-bottom: 8px;
     -moz-box-sizing: border-box;
@@ -42,3 +42,11 @@ md-toolbar {
     box-sizing: border-box;
     padding-right: 5px
   }
+
+.example-icon {
+  padding: 0 14px;
+}
+
+.example-spacer {
+  flex: 1 1 auto;
+}

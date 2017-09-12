@@ -5,6 +5,8 @@ import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ConfirmregistrationComponent } from './components/confirmregistration/confirmregistration.component';
+import { SubscribeComponent } from './components/subscribe/subscribe.component';
+import { PaypalComponent } from './components/paypal/paypal.component';
 
 import { AuthGuard } from './guards/auth.guard';
 
@@ -16,6 +18,8 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent},
   { path: 'confirmregistration', component: ConfirmregistrationComponent},
+  { path: 'subscribe', component: SubscribeComponent},
+  { path: 'paypal', component: PaypalComponent},
 
   // otherwise go to home
   { path: '**', redirectTo: '' }
