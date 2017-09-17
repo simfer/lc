@@ -1,10 +1,8 @@
 import {Component} from '@angular/core';
-import {FormControl, Validators} from '@angular/forms';
-import {Router, ActivatedRoute} from '@angular/router';
+import {Router} from '@angular/router';
+import { LocalStorageService } from './services/local-storage.service';
+import { Subscription }   from 'rxjs/Subscription';
 
-// import {Location} from "@angular/common";
-
-// const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 @Component({
   selector: 'app-root',
@@ -13,21 +11,36 @@ import {Router, ActivatedRoute} from '@angular/router';
 })
 
 export class AppComponent {
-  // genders = [
-  //  {value: 'M', viewValue: 'Uomo'},
-  //  {value: 'F', viewValue: 'Donna'}
-  // ];
-  // emailFormControl = new FormControl('', [
-  //  Validators.required,
-  //  Validators.pattern(EMAIL_REGEX)]);
+  subscription: Subscription;
+  currentUser = null;
+  username = '';
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+    //private route: ActivatedRoute,
+    private router: Router,
+    private localStorageService: LocalStorageService
+  ) {
+    this.subscription = localStorageService.loginAnnounced$.subscribe(
+      currentUser => {
+        this.currentUser = currentUser;
+        this.username = currentUser['username'];
+      });
 
-  goBack(): void {
-    // this.location.back();
+    //this.subscription = localStorageService.logoutAnnounced$.subscribe(
+    //  empty => {
+    //    this.currentUser = null;
+    //  });
+
+    //when the app refresh or initialized
+    //this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+  }
+
+  logout(): void {
+    localStorage.removeItem('currentUser');
+    this.currentUser = null;
+
+    this.router.navigate(['/login']);
   }
 
 }

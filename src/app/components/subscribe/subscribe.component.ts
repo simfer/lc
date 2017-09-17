@@ -6,18 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./subscribe.component.css']
 })
 export class SubscribeComponent implements OnInit {
-  favoritePayMethod: string = 'Paypal';
-
-  payMethods = [
-    'Paypal',
-    'Visa',
-    'American Express',
-    'Mastercard',
-  ];
 
   constructor() { }
 
   ngOnInit() {
   }
-
 }

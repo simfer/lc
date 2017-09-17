@@ -1,12 +1,27 @@
-.example-radio-group {
-  display: inline-flex;
-  flex-direction: column;
+.container {
+  display: table;
+  vertical-align: middle;
 }
 
-.example-radio-button {
-  margin: 5px;
+form {
+  margin-top: 2em;
 }
 
-.example-selected-value {
-  margin: 15px 0;
+.vcenter {
+  display: table-cell;
+  vertical-align: middle;
+  float: none;
+}
+
+.row1 {
+  height:400px;
+}
+.row2 {
+  height: 50px;
+}
+.special { height:400px; display:table;width:100%;}
+.v-m {display:table-cell;vertical-align:middle;width:50%}
+
+.full-width {
+  width: 100%;
 }

@@ -1,0 +1,27 @@
+.container {
+  display: table;
+  vertical-align: middle;
+}
+
+form {
+  margin-top: 2em;
+}
+
+.vcenter {
+  display: table-cell;
+  vertical-align: middle;
+  float: none;
+}
+
+.row1 {
+  height:400px;
+}
+.row2 {
+  height: 50px;
+}
+.special { height:400px; display:table;width:100%;}
+.v-m {display:table-cell;vertical-align:middle;width:50%}
+
+.full-width {
+  width: 100%;
+}

@@ -8,13 +8,13 @@ export class AuthenticationService {
 
   constructor(private http: Http) {}
   login(username: string, password: string) {
-    return this.http.post('/api/v1/login', JSON.stringify({username: username, password: password}), {headers: this.headers})
+    return this.http.post('/api/v1/customerlogin', JSON.stringify({username: username, password: password}), {headers: this.headers})
       .map((response: Response) => {
         const res = response.json();
         if (res.jwt) {
-          const user = {username: username, token: res.jwt};
+          //const user = {idcustomer:res.idcustomer, username: username, token: res.jwt};
 
-          localStorage.setItem('currentUser', JSON.stringify(user));
+          localStorage.setItem('currentUser', JSON.stringify(res));
         }
       });
   }

@@ -15,7 +15,8 @@ import {
   MdAutocompleteModule,
   MdRadioModule,
   MdIconModule,
-  MdIconRegistry
+  MdIconRegistry,
+  MdSnackBarModule
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
@@ -28,11 +29,15 @@ import {AuthenticationService} from './services/authentication.service';
 import {RegistrationService} from './services/registration.service';
 import { AlertService } from './services/alert.service';
 import { AuthGuard } from './guards/auth.guard';
+import {SubscribeGuard} from "./guards/subscribe.guard";
+import {LocalStorageService} from './services/local-storage.service'
 
 import { DatePipe } from '@angular/common';
 import { ConfirmregistrationComponent } from './components/confirmregistration/confirmregistration.component';
 import { SubscribeComponent } from './components/subscribe/subscribe.component';
 import { PaypalComponent } from './components/paypal/paypal.component';
+import { PaymentComponent } from './components/payment/payment.component';
+import { SubscriptionpaymentComponent } from './components/subscriptionpayment/subscriptionpayment.component';
 
 
 @NgModule({
@@ -44,7 +49,9 @@ import { PaypalComponent } from './components/paypal/paypal.component';
     AlertComponent,
     ConfirmregistrationComponent,
     SubscribeComponent,
-    PaypalComponent
+    PaypalComponent,
+    PaymentComponent,
+    SubscriptionpaymentComponent
   ],
   imports: [
     BrowserModule,
@@ -62,19 +69,23 @@ import { PaypalComponent } from './components/paypal/paypal.component';
     MdButtonModule,
     MdAutocompleteModule,
     MdRadioModule,
-    MdIconModule
+    MdIconModule,
+    MdSnackBarModule
   ],
   providers: [
     {provide: LOCALE_ID, useValue: 'it-IT'},
     AuthenticationService,
     RegistrationService,
     AuthGuard,
+    SubscribeGuard,
     AlertService,
-    DatePipe],
+    DatePipe,
+    LocalStorageService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(mdIconRegistry: MdIconRegistry, domSanitizer: DomSanitizer){
+  constructor(mdIconRegistry: MdIconRegistry, domSanitizer: DomSanitizer) {
     mdIconRegistry.addSvgIconSet(domSanitizer.bypassSecurityTrustResourceUrl('./assets/mdi.svg')); // Or whatever path you placed mdi.svg at
   }
 }

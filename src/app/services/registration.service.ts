@@ -9,6 +9,7 @@ export class RegistrationService {
   private headers = new Headers({'Content-Type': 'application/json'});
 
   constructor(private http: Http) {}
+
   register(customer: any) {
      return this.http.post('/api/v1/register', customer, {headers: this.headers})
       .map((response: Response) => {
