@@ -25,9 +25,9 @@ export class PaypalComponent implements OnInit {
       .map(response => response.json())
       .subscribe(result => {
         this.result = result;
-        let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        currentUser['subscribed'] = '1';
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        let currentCustomer = JSON.parse(localStorage.getItem('currentCustomer'));
+        currentCustomer['subscribed'] = '1';
+        localStorage.setItem('currentCustomer', JSON.stringify(currentCustomer));
         alert('Pagamento avvenuto con successo');
         console.log(this.result);
         this.router.navigate(['/subscribe']);

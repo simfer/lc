@@ -1,23 +1,29 @@
-<div class="container">
-	<div class="row row1">
-		<div class="col-md-6">
-			<div>&nbsp;</div>
-		</div>
-		<div class="col-md-6 vcenter">
-			<div class="row">
-				<div class="col-md-12">Ti è stata inviata una email
-					all'indirizzo specificato. Fai click sul link contenuto nella email
-					per confermare la registrazione e poi accedi con le tue
-					credenziali.</div>
-
-			</div>
-			<div class="row">
-				<div class="col-md-12">
-					<a [routerLink]="['/']" class="btn btn-link">Indietro</a>
-				</div>
-			</div>
-		</div>
-
-	</div>
-</div>
-
+<form #f="ngForm">
+  <md-grid-list cols="12" rowHeight="45px">
+    <md-grid-tile colspan="4" rowspan="8">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="8" rowspan="2">
+      <h4>ATTENZIONE!</h4>
+    </md-grid-tile>
+    <md-grid-tile colspan="8" rowspan="4">
+      Ti è stata inviata una email
+      all'indirizzo specificato. Fai click sul link contenuto nella email
+      per confermare la registrazione e poi accedi con le tue
+      credenziali. Se non hai rivevuto l'email di registrazione, ti invitiamo a controllare la casella di posta indesiderata.
+      Per inviare nuovamente l'email, fare click sul pulsante in basso a destra.
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      <button md-raised-button (click)="logout()">Esci <md-icon svgIcon="exit-to-app"></md-icon></button>
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      <button md-raised-button (click)="resendConfirmationEmail()">Email di registrazione <md-icon svgIcon="email-outline"></md-icon></button>
+    </md-grid-tile>
+  </md-grid-list>
+</form>

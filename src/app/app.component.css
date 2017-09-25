@@ -50,3 +50,60 @@ md-toolbar {
 .example-spacer {
   flex: 1 1 auto;
 }
+
+.container {
+  display: table;
+  vertical-align: middle;
+}
+.row {
+  display: table-row;
+  vertical-align: middle;
+}
+
+.vcenter {
+  display: table-cell;
+  vertical-align: middle;
+  float: none;
+}
+
+.row1 {
+  height:400px;
+}
+.row2 {
+  height: 50px;
+}
+.special { height:400px; display:table;width:100%;}
+.v-m {display:table-cell;vertical-align:middle;width:50%}
+
+form {
+  margin-top: 2em;
+}
+
+.full-width {
+  width: 100%;
+}
+.party {
+  animation: party 5000ms infinite;
+}
+
+@keyframes party {
+  0% { background: #00f; }
+  10% { background: #8e44ad; }
+  20% { background: #1abc9c; }
+  30% { background: #d35400; }
+  40% { background: #00f; }
+  50% { background: #34495e; }
+  60% { background: #00f; }
+  70% { background: #2980b9; }
+  80% { background: #f1c40f; }
+  90% { background: #2980b9; }
+  100% { background: #0ff; }
+}
+
+::ng-deep snack-bar-container.snackbar-class {
+  background: #0fd934;
+}
+
+::ng-deep .snackbar-class .mat-simple-snackbar {
+  color: #000000;
+}

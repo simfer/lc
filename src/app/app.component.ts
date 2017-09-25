@@ -12,7 +12,7 @@ import { Subscription }   from 'rxjs/Subscription';
 
 export class AppComponent {
   subscription: Subscription;
-  currentUser = null;
+  currentCustomer = null;
   username = '';
 
   constructor(
@@ -21,24 +21,24 @@ export class AppComponent {
     private localStorageService: LocalStorageService
   ) {
     this.subscription = localStorageService.loginAnnounced$.subscribe(
-      currentUser => {
-        this.currentUser = currentUser;
-        this.username = currentUser['username'];
+      currentCustomer => {
+        this.currentCustomer = currentCustomer;
+        this.username = currentCustomer['username'];
       });
 
     //this.subscription = localStorageService.logoutAnnounced$.subscribe(
     //  empty => {
-    //    this.currentUser = null;
+    //    this.currentCustomer = null;
     //  });
 
     //when the app refresh or initialized
-    //this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    //this.currentCustomer = JSON.parse(localStorage.getItem('currentCustomer'));
 
   }
 
   logout(): void {
-    localStorage.removeItem('currentUser');
-    this.currentUser = null;
+    localStorage.removeItem('currentCustomer');
+    this.currentCustomer = null;
 
     this.router.navigate(['/login']);
   }

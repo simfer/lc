@@ -14,12 +14,12 @@ export class AuthenticationService {
         if (res.jwt) {
           //const user = {idcustomer:res.idcustomer, username: username, token: res.jwt};
 
-          localStorage.setItem('currentUser', JSON.stringify(res));
+          localStorage.setItem('currentCustomer', JSON.stringify(res));
         }
       });
   }
 
   logout() {
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentCustomer');
   }
 }

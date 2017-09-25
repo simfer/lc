@@ -5,7 +5,7 @@
 		</div>
 		<div class="col-md-6 vcenter">
 			<div>
-				<form [formGroup]="myForm" (ngSubmit)="register2(myForm.value)" #f="ngForm" novalidate>
+				<form [formGroup]="myForm" (ngSubmit)="register(myForm.value)" #f="ngForm" novalidate>
 					<div class="row full-width">
 						<div class="col-md-12">
 							<md-form-field class="full-width">
@@ -15,7 +15,10 @@
 								<md-error *ngIf="myForm.controls['username'].hasError('required')">
       								Il nickname è obbligatorio!
     							</md-error>
-
+                <md-error *ngIf="myForm.controls['username'].hasError('minlength')">
+                  Il nickname deve essere lungo almeno 8 caratteri!
+                </md-error>
+                {{(existingNickname ? 'Il  nickname è già stato utilizzato!':'')}}
 							</md-form-field>
 						</div>
 					</div>
@@ -113,7 +116,7 @@
 
 					<div class="row">
 						<div class="col-md-12">
-							<button [disabled]="loading" md-raised-button>
+							<button [disabled]="existingNickname" md-raised-button>
 								Registrati&nbsp;
                 <md-icon svgIcon="account-plus"></md-icon>
 							</button>

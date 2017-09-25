@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, HostListener} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {RegistrationService} from '../../services/registration.service';
 import {AlertService} from '../../services/alert.service';
@@ -7,13 +7,14 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 import { DatePipe } from '@angular/common';
+import { CustomerService} from "../../services/customer.service";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['../../app.component.css']
 })
 export class RegisterComponent implements OnInit {
   public myForm: FormGroup;
@@ -37,10 +38,40 @@ filteredCities: Observable<string[]>;
 
   loading = false;
   notMatchingPasswords = false;
+  existingNickname = false;
   returnUrl: string;
 
-  constructor(private route: ActivatedRoute, private registrationService: RegistrationService,
-              private alertService: AlertService, private router: Router, private datePipe: DatePipe) {
+  constructor(
+    private route: ActivatedRoute,
+    private registrationService: RegistrationService,
+    private customerService: CustomerService,
+    private alertService: AlertService,
+    private router: Router,
+    private datePipe: DatePipe
+  ) {
+  }
+
+  //@HostListener('window:keyup', ['$event'])
+  //onKeyUp(e) {
+  //  console.log('keyup', e);
+  //}
+
+  @HostListener('window:input', ['$event'])
+  onInput(e) {
+    if (e.target.name === 'nickname') {
+      console.log('input', e);
+      console.log('Value = ' + e.target.value);
+      if (e.target.value.length > 7) this.checkExistingNickname(e.target.value);
+      else this.existingNickname = false;
+    }
+  }
+
+  checkExistingNickname(v) {
+    this.customerService.checkExistingUsername(v).then(response => {
+      console.log(response);
+      if (response['found'] === true) this.existingNickname = true;
+      else this.existingNickname = false;
+    });
   }
 
   ngOnInit() {
@@ -71,7 +102,7 @@ filteredCities: Observable<string[]>;
     this.router.navigate(['/login']);
   }
 
-register2(v) {
+register(v) {
   let isValid = false;
   const customer = {username: '', password: '', lastname: '', firstname: '', gender: '',
     dateofbirth: '', placeofbirth: '', email: ''};

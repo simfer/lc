@@ -1,27 +1,23 @@
 <div class="container">
   <div class="row row1">
-    <div class="col-md-4">
+    <div class="col-md-6">
       <div>&nbsp;</div>
     </div>
-    <div class="col-md-2 vcenter">
-      <div>
+    <div class="col-md-6 vcenter">
+      <div class="row">
         <h4>Cosa vuoi fare?</h4>
         <br>
-        <button md-raised-button>
+        <button style="width: 100%;height: 50px" md-raised-button color="primary" (click)="redeemCode()">
           Riscatta codice&nbsp;
           <md-icon svgIcon="account-plus"></md-icon>
         </button>
-        <br>
-        <button md-raised-button>
+      </div>
+      <div class="row">
+        <button style="width: 100%;height: 50px;margin-top: 40px" md-raised-button color="accent" (click)="buyDiamonds()">
           Compra diamanti&nbsp;
           <md-icon svgIcon="account-plus"></md-icon>
         </button>
 
-      </div>
-    </div>
-    <div class="col-md-8 vcenter">
-      <div>
-        mappa
       </div>
     </div>
 

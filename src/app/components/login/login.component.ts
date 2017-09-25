@@ -7,7 +7,7 @@ import {LocalStorageService} from '../../services/local-storage.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['../../app.component.css']
 })
 
 export class LoginComponent implements OnInit {
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
       .subscribe(
       data => {
         this.announce();
-        this.router.navigate(['/subscribe']);
+        this.router.navigate(['/confirmregistration']);
       },
       error => {
         console.log(error);
@@ -51,9 +51,9 @@ export class LoginComponent implements OnInit {
   }
 
   announce() {
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (currentUser && currentUser.token) {
-      return this.localStorageService.announceLogin(currentUser);
+    let currentCustomer = JSON.parse(localStorage.getItem('currentCustomer'));
+    if (currentCustomer && currentCustomer.token) {
+      return this.localStorageService.announceLogin(currentCustomer);
     }
   }
 }

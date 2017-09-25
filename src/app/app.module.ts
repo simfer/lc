@@ -4,6 +4,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AppRoutingModule} from './app-routing.module';
 import {HttpModule} from '@angular/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {AgmCoreModule} from '@agm/core';
+
 import {
   MdTabsModule,
   MdToolbarModule,
@@ -16,28 +18,46 @@ import {
   MdRadioModule,
   MdIconModule,
   MdIconRegistry,
-  MdSnackBarModule
+  MdSnackBarModule,
+  MdDialogModule,
+  MdGridListModule,
+  MdSelectModule,
+  MdListModule
 } from '@angular/material';
 
-import {AppComponent} from './app.component';
-import {LoginComponent} from './components/login/login.component';
-import {RegisterComponent} from './components/register/register.component';
-import {HomeComponent} from './components/home/home.component';
+// COMPONENTS
+import { AppComponent } from './app.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { HomeComponent } from './components/home/home.component';
 import { AlertComponent } from './components/alert/alert.component';
-
-import {AuthenticationService} from './services/authentication.service';
-import {RegistrationService} from './services/registration.service';
-import { AlertService } from './services/alert.service';
-import { AuthGuard } from './guards/auth.guard';
-import {SubscribeGuard} from "./guards/subscribe.guard";
-import {LocalStorageService} from './services/local-storage.service'
-
-import { DatePipe } from '@angular/common';
 import { ConfirmregistrationComponent } from './components/confirmregistration/confirmregistration.component';
 import { SubscribeComponent } from './components/subscribe/subscribe.component';
 import { PaypalComponent } from './components/paypal/paypal.component';
 import { PaymentComponent } from './components/payment/payment.component';
 import { SubscriptionpaymentComponent } from './components/subscriptionpayment/subscriptionpayment.component';
+import { MapComponent } from './components/map/map.component';
+import { AlertdialogComponent } from './components/alertdialog/alertdialog.component';
+import { OrderComponent } from './components/order/order.component';
+import { OrdersummaryComponent } from './components/ordersummary/ordersummary.component';
+
+// SERVICE
+import { AuthenticationService } from './services/authentication.service';
+import { RegistrationService } from './services/registration.service';
+import { AlertService } from './services/alert.service';
+import { AuthGuard } from './guards/auth.guard';
+import { SubscribeGuard } from './guards/subscribe.guard';
+import { RegisterGuard} from './guards/register.guard';
+import { LocalStorageService } from './services/local-storage.service'
+import { DialogsService } from "./services/dialogs.service";
+import { RegionService } from "./services/region.service";
+import { ProductService} from "./services/product.service";
+import { CustomerService} from "./services/customer.service";
+import { ColorService} from "./services/color.service";
+import { OrderService} from "./services/order.service";
+
+// PIPES
+import { DatePipe } from '@angular/common';
 
 
 @NgModule({
@@ -51,7 +71,11 @@ import { SubscriptionpaymentComponent } from './components/subscriptionpayment/s
     SubscribeComponent,
     PaypalComponent,
     PaymentComponent,
-    SubscriptionpaymentComponent
+    SubscriptionpaymentComponent,
+    MapComponent,
+    AlertdialogComponent,
+    OrderComponent,
+    OrdersummaryComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +94,12 @@ import { SubscriptionpaymentComponent } from './components/subscriptionpayment/s
     MdAutocompleteModule,
     MdRadioModule,
     MdIconModule,
-    MdSnackBarModule
+    MdSnackBarModule,
+    MdDialogModule,
+    MdGridListModule,
+    MdSelectModule,
+    MdListModule,
+    AgmCoreModule.forRoot({apiKey:'xxxxxxxx'})
   ],
   providers: [
     {provide: LOCALE_ID, useValue: 'it-IT'},
@@ -78,10 +107,18 @@ import { SubscriptionpaymentComponent } from './components/subscriptionpayment/s
     RegistrationService,
     AuthGuard,
     SubscribeGuard,
+    RegisterGuard,
     AlertService,
     DatePipe,
-    LocalStorageService
+    LocalStorageService,
+    DialogsService,
+    RegionService,
+    ProductService,
+    CustomerService,
+    ColorService,
+    OrderService
   ],
+  entryComponents: [ AlertdialogComponent ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
