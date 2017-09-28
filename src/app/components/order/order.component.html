@@ -1,0 +1,49 @@
+<form #f="ngForm" (ngSubmit)="orderNow()">
+  <md-grid-list cols="12" rowHeight="45px">
+  <md-grid-tile colspan="4" rowspan="8">
+    &nbsp;
+  </md-grid-tile>
+    <md-grid-tile colspan="8" rowspan="2">
+      <h4>Seleziona il numero di diamanti che vuoi comprare, le regioni(max. 2) dove vuoi allocarli e il colore
+      che preferisci!</h4>
+    </md-grid-tile>
+  <md-grid-tile colspan="3" rowspan="2">
+    <md-select placeholder="Scegli un prodotto" [(ngModel)]="selectedProduct" name="product" style="width: 100%">
+      <md-option *ngFor="let product of products; let i = index" [value]="i">
+        {{product.description}}
+      </md-option>
+    </md-select>
+  </md-grid-tile>
+  <md-grid-tile colspan="3" rowspan="2">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="2">
+    <md-select placeholder="Scegli un colore" [(ngModel)]="selectedColor" name="color" style="width: 100%">
+      <md-option *ngFor="let color of colors; let i = index" [value]="i">
+        {{color.description}}
+      </md-option>
+    </md-select>
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2">
+    <md-select placeholder="Scegli le regioni (max. 2)" [(ngModel)]="selectedRegions"
+               maxlength="2" name="region"
+               multiple flex style="width: 100%">
+      <md-option *ngFor="let region of regions; let i = index" [value]="i">
+        {{region.description}}
+      </md-option>
+    </md-select>
+  </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      Importo totale: {{(selectedProduct?products[selectedProduct].price:0)}} €
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      <button md-raised-button [disabled]="!(f.valid && (selectedProduct!=='') && (selectedRegions!=='') && (selectedColor!==''))">Ordina ora <md-icon svgIcon="cart-plus"></md-icon></button>
+    </md-grid-tile>
+</md-grid-list>
+</form>

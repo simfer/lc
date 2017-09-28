@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="row row1">
+    <div class="col-md-6">
+      <div>&nbsp;</div>
+    </div>
+    <div class="col-md-6 vcenter">
+      <div>
+        <h2>Seleziona il metodo di pagamento:</h2>
+        <h5 style="color: purple">*** Attualmente il solo metodo di pagamento abilitato è Paypal! ***</h5>
+        <br>
+        <md-radio-group class="example-radio-group" [(ngModel)]="favoritePayMethod" (change)="paymentClick($event)">
+          <md-radio-button class="example-radio-button" *ngFor="let payMethod of payMethods" [value]="payMethod">
+            {{payMethod}}
+          </md-radio-button>
+        </md-radio-group>
+        <div class="example-selected-value">Il metodo di pagamento selezionato è : {{favoritePayMethod}}</div><br>
+        <button md-raised-button [disabled]="paymentDisabled" (click)="payNow()">Paga ora <md-icon svgIcon="coin"></md-icon></button>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,14 @@
+{
+    "name": "i045523/server",
+    "require": {
+        "firebase/php-jwt": "^5.0",
+        "zendframework/zendframework": "^3.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Daedalusoft",
+            "email": "careter33@gustr.com"
+        }
+    ]
+}

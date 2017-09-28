@@ -1,0 +1,40 @@
+<form #f="ngForm">
+  <md-grid-list cols="12" rowHeight="45px">
+    <md-grid-tile colspan="4" rowspan="8">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="8" rowspan="2">
+      <h4>ATTENZIONE! stai per confermare il seguente ordine:</h4>
+    </md-grid-tile>
+    <md-grid-tile colspan="8" rowspan="4">
+        <table height="100%">
+          <tr>
+            <td><label>Prodotto:</label></td><td>&nbsp;{{this.order.productDescription}}</td>
+          </tr>
+          <tr>
+            <td><label>Colore:</label></td><td>&nbsp;{{this.order.colorDescription}}</td>
+          </tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr>
+            <td><label>Regioni:</label></td><td><ul><li *ngFor="let region of order.regions">{{region.regionDescription}}</li></ul></td>
+          </tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr>
+            <td><label>Importo:</label></td><td>&nbsp;{{this.order.totalAmount}} €</td>
+          </tr>
+        </table>
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      &nbsp;
+    </md-grid-tile>
+    <md-grid-tile colspan="2" rowspan="2">
+      <button md-raised-button (click)="confirmOrder()">Conferma ordine <md-icon svgIcon="check"></md-icon></button>
+    </md-grid-tile>
+  </md-grid-list>
+</form>
