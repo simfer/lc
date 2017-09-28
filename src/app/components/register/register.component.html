@@ -99,7 +99,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-12">
+						<div class="col-md-6">
 							<md-form-field class="full-width">
 								<input
 									type="email" name="email" mdInput
@@ -112,6 +112,16 @@
     							</md-error>
 							</md-form-field>
 						</div>
+            <div class="col-md-6">
+              <md-form-field class="full-width">
+                <input
+                  type="text" name="mobile" mdInput
+                  formControlName="mobile" placeholder="Cellulare">
+                <md-error *ngIf="myForm.controls['username'].hasError('required')">
+                  Il cellulare è obbligatorio!
+                </md-error>
+              </md-form-field>
+            </div>
 					</div>
 
 					<div class="row">

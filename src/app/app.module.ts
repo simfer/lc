@@ -41,7 +41,7 @@ import { AlertdialogComponent } from './components/alertdialog/alertdialog.compo
 import { OrderComponent } from './components/order/order.component';
 import { OrdersummaryComponent } from './components/ordersummary/ordersummary.component';
 
-// SERVICE
+// SERVICES
 import { AuthenticationService } from './services/authentication.service';
 import { RegistrationService } from './services/registration.service';
 import { AlertService } from './services/alert.service';
@@ -55,6 +55,7 @@ import { ProductService} from "./services/product.service";
 import { CustomerService} from "./services/customer.service";
 import { ColorService} from "./services/color.service";
 import { OrderService} from "./services/order.service";
+import { SendmailService} from "./services/sendmail.service";
 
 // PIPES
 import { DatePipe } from '@angular/common';
@@ -116,7 +117,8 @@ import { DatePipe } from '@angular/common';
     ProductService,
     CustomerService,
     ColorService,
-    OrderService
+    OrderService,
+    SendmailService
   ],
   entryComponents: [ AlertdialogComponent ],
   bootstrap: [AppComponent]

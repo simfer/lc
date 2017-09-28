@@ -11,7 +11,7 @@ export class RegistrationService {
   constructor(private http: Http) {}
 
   register(customer: any) {
-     return this.http.post('/api/v1/register', customer, {headers: this.headers})
+     return this.http.post('/api/v1/customerregister', customer, {headers: this.headers})
       .map((response: Response) => {
         const res = response.json();
         console.log('send link to user');

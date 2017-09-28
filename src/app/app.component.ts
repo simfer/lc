@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import { LocalStorageService } from './services/local-storage.service';
 import { Subscription }   from 'rxjs/Subscription';
-
+import { Localstorage} from "./interfaces/localstorage";
 
 @Component({
   selector: 'app-root',
@@ -12,19 +12,22 @@ import { Subscription }   from 'rxjs/Subscription';
 
 export class AppComponent {
   subscription: Subscription;
-  currentCustomer = null;
+  //currentCustomer = null;
   username = '';
 
   constructor(
-    //private route: ActivatedRoute,
     private router: Router,
     private localStorageService: LocalStorageService
   ) {
-    this.subscription = localStorageService.loginAnnounced$.subscribe(
-      currentCustomer => {
-        this.currentCustomer = currentCustomer;
-        this.username = currentCustomer['username'];
-      });
+    //this.subscription = localStorageService.loginAnnounced$.subscribe(
+    //  uname => {
+    //    this.username = uname;
+    //  });
+    let ls: Localstorage = JSON.parse(localStorage.getItem('currentCustomer'));
+
+    if (ls) {
+      this.username = ls.username;
+    }
 
     //this.subscription = localStorageService.logoutAnnounced$.subscribe(
     //  empty => {
@@ -38,8 +41,7 @@ export class AppComponent {
 
   logout(): void {
     localStorage.removeItem('currentCustomer');
-    this.currentCustomer = null;
-
+    this.username = '';
     this.router.navigate(['/login']);
   }
 

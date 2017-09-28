@@ -1,8 +1,8 @@
 <header>
   <md-toolbar>
     <span>L&nbsp;<span class="glyphicon glyphicon-heart" aria-hidden="true"></span>&nbsp;ve Challenge</span>
-    <span class="example-spacer"></span>{{(currentCustomer?currentCustomer.username:'')}}
-    <button *ngIf="currentCustomer" md-button (click)="logout()">
+    <span class="example-spacer"></span>{{username}}
+    <button *ngIf="username" md-button (click)="logout()">
       Esci
       <md-icon svgIcon="exit-to-app"></md-icon>
     </button>

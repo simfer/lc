@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Http, Headers, Response} from '@angular/http';
 import 'rxjs/add/operator/map';
+import { Localstorage } from "../interfaces/localstorage";
 
 @Injectable()
 export class AuthenticationService {
@@ -10,11 +11,9 @@ export class AuthenticationService {
   login(username: string, password: string) {
     return this.http.post('/api/v1/customerlogin', JSON.stringify({username: username, password: password}), {headers: this.headers})
       .map((response: Response) => {
-        const res = response.json();
-        if (res.jwt) {
-          //const user = {idcustomer:res.idcustomer, username: username, token: res.jwt};
-
-          localStorage.setItem('currentCustomer', JSON.stringify(res));
+        const ls: Localstorage = response.json();
+        if (ls.jwt) {
+          localStorage.setItem('currentCustomer', JSON.stringify(ls));
         }
       });
   }

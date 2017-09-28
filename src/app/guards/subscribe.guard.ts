@@ -9,7 +9,7 @@ export class SubscribeGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (localStorage.getItem('currentCustomer')) {
       let k = JSON.parse(localStorage.getItem('currentCustomer'));
-      console.log(k["subscribed"]);
+      console.log('Subscribed = ' + k["subscribed"]);
       if (k['subscribed'] === '0') {
         return true;
 

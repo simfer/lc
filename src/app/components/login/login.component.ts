@@ -3,6 +3,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 import {AuthenticationService} from '../../services/authentication.service';
 import {AlertService} from '../../services/alert.service';
 import {LocalStorageService} from '../../services/local-storage.service';
+import { Localstorage} from "../../interfaces/localstorage";
 
 @Component({
   selector: 'app-login',
@@ -51,9 +52,12 @@ export class LoginComponent implements OnInit {
   }
 
   announce() {
-    let currentCustomer = JSON.parse(localStorage.getItem('currentCustomer'));
-    if (currentCustomer && currentCustomer.token) {
-      return this.localStorageService.announceLogin(currentCustomer);
+    console.log('announce');
+    let ls: Localstorage = JSON.parse(localStorage.getItem('currentCustomer'));
+
+    if (ls && ls.jwt) {
+      console.log(ls.jwt);
+      return this.localStorageService.announceLogin(ls.username);
     }
   }
 }
