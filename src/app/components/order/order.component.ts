@@ -6,6 +6,7 @@ import { Product } from "../../interfaces/product";
 import { Color } from "../../interfaces/color";
 import { ProductService } from "../../services/product.service";
 import { ColorService } from "../../services/color.service";
+import { Location} from "@angular/common";
 
 @Component({
   selector: 'app-order',
@@ -23,6 +24,7 @@ export class OrderComponent implements OnInit {
 
   constructor(
     private router: Router,
+    private location: Location,
     private regionService: RegionService,
     private productService: ProductService,
     private colorService: ColorService
@@ -54,6 +56,7 @@ export class OrderComponent implements OnInit {
   }
 
   orderNow() {
+    console.log('order now');
     let regions = [];
 
     for (var i=0;i<this.selectedRegions.length;i++) {
@@ -75,5 +78,10 @@ export class OrderComponent implements OnInit {
     localStorage.setItem('currentOrder', JSON.stringify(order));
     this.router.navigate(['/ordersummary']);
 
+  }
+
+  goBack(e) {
+    e.preventDefault();
+    this.location.back();
   }
 }

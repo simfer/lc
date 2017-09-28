@@ -4,6 +4,7 @@ import {OrderService} from "../../services/order.service";
 import { DatePipe } from '@angular/common';
 import {MdSnackBar} from "@angular/material";
 import { Router } from "@angular/router";
+import { Location} from "@angular/common";
 
 @Component({
   selector: 'app-ordersummary',
@@ -14,6 +15,7 @@ export class OrdersummaryComponent implements OnInit {
   order: any;
   constructor(
     private router: Router,
+    private location: Location,
     private orderService: OrderService,
     private datePipe: DatePipe,
     private snackBar: MdSnackBar) {
@@ -58,5 +60,9 @@ export class OrdersummaryComponent implements OnInit {
       });
 
 
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

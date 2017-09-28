@@ -42,6 +42,7 @@ import { OrderComponent } from './components/order/order.component';
 import { OrdersummaryComponent } from './components/ordersummary/ordersummary.component';
 
 // SERVICES
+import { Location } from "@angular/common";
 import { AuthenticationService } from './services/authentication.service';
 import { RegistrationService } from './services/registration.service';
 import { AlertService } from './services/alert.service';
@@ -104,6 +105,7 @@ import { DatePipe } from '@angular/common';
   ],
   providers: [
     {provide: LOCALE_ID, useValue: 'it-IT'},
+    Location,
     AuthenticationService,
     RegistrationService,
     AuthGuard,
