@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Order} from '../interfaces/order';
+import { CustomerOrder} from "../interfaces/customer-order";
 import {Headers, Http} from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
@@ -34,6 +35,20 @@ export class OrderService {
     return this.http.get(url)
       .toPromise()
       .then(response => response.json() as Order)
+      .catch(this.handleError);
+  }
+
+  /**
+   * Returns order based on id
+   * @param id:string
+   * @returns {Promise<Order>}
+   */
+  getCustomerOrders(idcustomer: string): Promise<Order> {
+    let s = '/api/v1/customerorders/';
+    const url = `${s}${idcustomer}`;
+    return this.http.get(url)
+      .toPromise()
+      .then(response => response.json() as CustomerOrder)
       .catch(this.handleError);
   }
 

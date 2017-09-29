@@ -15,7 +15,7 @@ import { RegisterGuard} from './guards/register.guard';
 import { MapComponent } from "./components/map/map.component";
 import { OrderComponent } from './components/order/order.component';
 import { OrdersummaryComponent } from './components/ordersummary/ordersummary.component';
-
+import { OrdersListComponent} from "./components/orders-list/orders-list.component";
 //  { path: '', component: HomeComponent,canActivate: [AuthGuard] },
 
 const routes: Routes = [
@@ -31,6 +31,7 @@ const routes: Routes = [
   { path: 'map', component: MapComponent, canActivate: [AuthGuard] },
   { path: 'order', component: OrderComponent, canActivate: [AuthGuard] },
   { path: 'ordersummary', component: OrdersummaryComponent, canActivate: [AuthGuard] },
+  { path: 'orderslist', component: OrdersListComponent, canActivate: [AuthGuard] },
 
   // otherwise go to home
   { path: '**', redirectTo: '' }

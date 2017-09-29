@@ -22,7 +22,8 @@ import {
   MdDialogModule,
   MdGridListModule,
   MdSelectModule,
-  MdListModule
+  MdListModule,
+  MdTableModule
 } from '@angular/material';
 
 // COMPONENTS
@@ -40,6 +41,7 @@ import { MapComponent } from './components/map/map.component';
 import { AlertdialogComponent } from './components/alertdialog/alertdialog.component';
 import { OrderComponent } from './components/order/order.component';
 import { OrdersummaryComponent } from './components/ordersummary/ordersummary.component';
+import { OrdersListComponent } from './components/orders-list/orders-list.component';
 
 // SERVICES
 import { Location } from "@angular/common";
@@ -77,7 +79,8 @@ import { DatePipe } from '@angular/common';
     MapComponent,
     AlertdialogComponent,
     OrderComponent,
-    OrdersummaryComponent
+    OrdersummaryComponent,
+    OrdersListComponent
   ],
   imports: [
     BrowserModule,
@@ -101,6 +104,7 @@ import { DatePipe } from '@angular/common';
     MdGridListModule,
     MdSelectModule,
     MdListModule,
+    MdTableModule,
     AgmCoreModule.forRoot({apiKey:'xxxxxxxx'})
   ],
   providers: [

@@ -123,3 +123,32 @@ form {
 
 
 
+
+
+/* Structure */
+.example-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+}
+
+.example-header {
+  min-height: 64px;
+  display: flex;
+  align-items: baseline;
+  padding: 8px 24px 0;
+  font-size: 20px;
+  justify-content: space-between;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  flex-grow: 1;
+  margin-left: 32px;
+}
+
+.mat-table {
+  overflow: auto;
+  max-height: 500px;
+}

@@ -31,4 +31,7 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/order']);
   }
 
+  openOrdersList() {
+    this.router.navigate(['/orderslist']);
+  }
 }
