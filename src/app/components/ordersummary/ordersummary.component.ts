@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {Order} from "../../interfaces/order";
-import {OrderService} from "../../services/order.service";
+import { Component, OnInit } from '@angular/core';
+import { Order } from "../../interfaces/order";
+import { OrderService } from "../../services/order.service";
 import { DatePipe } from '@angular/common';
-import {MdSnackBar} from "@angular/material";
+import { MdSnackBar } from "@angular/material";
 import { Router } from "@angular/router";
 import { Location} from "@angular/common";
 
