@@ -52,12 +52,12 @@ export class LoginComponent implements OnInit {
   }
 
   announce() {
-    console.log('announce');
     let ls: Localstorage = JSON.parse(localStorage.getItem('currentCustomer'));
 
     if (ls && ls.jwt) {
-      console.log(ls.jwt);
       return this.localStorageService.announceLogin(ls.username);
+    } else {
+
     }
   }
 }

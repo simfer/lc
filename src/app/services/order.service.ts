@@ -43,12 +43,12 @@ export class OrderService {
    * @param id:string
    * @returns {Promise<Order>}
    */
-  getCustomerOrders(idcustomer: string): Promise<Order> {
+  getCustomerOrders(idcustomer: string): Promise<CustomerOrder[]> {
     let s = '/api/v1/customerorders/';
     const url = `${s}${idcustomer}`;
     return this.http.get(url)
       .toPromise()
-      .then(response => response.json() as CustomerOrder)
+      .then(response => response.json() as CustomerOrder[])
       .catch(this.handleError);
   }
 

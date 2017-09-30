@@ -1,32 +1,34 @@
-<div class="container">
-  <div class="row row1">
-    <div class="col-md-6">
-      <div>&nbsp;</div>
-    </div>
-    <div class="col-md-6 vcenter">
-      <div>
-      <h4>Inserisci il tuo nickname e la password:</h4>
-      <br>
-        <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
-          <md-input-container [ngClass]="{ 'has-error': f.submitted && !username.valid }">
-            <input type="text" name="username" [(ngModel)]="model.username" #username="ngModel" mdInput
-                   placeholder="User name" required>
-                       <md-error *ngIf="f.submitted && !username.valid">Il nome utente è obbligatorio!</md-error>
-
-          </md-input-container>
-
-          <md-input-container>
-            <input type="password" name="password" [(ngModel)]="model.password" #password="ngModel" mdInput
-                   placeholder="Password" required>
-                       <md-error *ngIf="f.submitted && !password.valid">La password è obbligatoria!</md-error>
-          </md-input-container>
-          <button [disabled]="loading" md-raised-button>Accedi
-          </button>
-        </form>
-        Se non sei ancora registrato clicca<a [routerLink]="['/register']" class="btn btn-link">qui</a>
-
-      </div>
-    </div>
-
-  </div>
-</div>
+<form name="form" #f="ngForm" (ngSubmit)="f.form.valid && login()" novalidate>
+  <md-grid-list cols="12" rowHeight="27px">
+  <md-grid-tile colspan="4" rowspan="14">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2">
+    <h4>Inserisci il tuo nickname e la password:</h4>
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="8">
+      <md-input-container [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+        <input type="text" name="username" [(ngModel)]="model.username" #username="ngModel" mdInput
+               placeholder="User name" required>
+        <md-error *ngIf="f.submitted && !username.valid">Il nome utente è obbligatorio!</md-error>
+      </md-input-container>
+      <md-input-container>
+        <input type="password" name="password" [(ngModel)]="model.password" #password="ngModel" mdInput
+               placeholder="Password" required>
+        <md-error *ngIf="f.submitted && !password.valid">La password è obbligatoria!</md-error>
+      </md-input-container>
+  </md-grid-tile>
+  <md-grid-tile colspan="4" rowspan="2">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="2">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="2">
+    <button md-raised-button (click)="null">Accedi <md-icon svgIcon="check"></md-icon></button>
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2">
+    Se non sei ancora registrato clicca<a [routerLink]="['/register']" class="btn btn-link">qui</a>
+  </md-grid-tile>
+</md-grid-list>
+</form>

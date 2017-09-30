@@ -11,10 +11,14 @@ import {DialogsService} from '../../services/dialogs.service';
 export class HomeComponent implements OnInit {
   public result: any;
 
-  constructor(private dialogsService: DialogsService, private router:Router, public dialog: MdDialog, public viewContainerRef: ViewContainerRef) { }
+  constructor(
+    private dialogsService: DialogsService,
+    private router:Router,
+    public dialog: MdDialog,
+    public viewContainerRef: ViewContainerRef
+  ) { }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   redeemCode():void {
     this.dialogsService
@@ -22,9 +26,7 @@ export class HomeComponent implements OnInit {
       .subscribe(res => {
         this.result = res;
         console.log(JSON.stringify(res));
-
       });
-
   }
 
   buyDiamonds():void {
