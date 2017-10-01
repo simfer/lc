@@ -21,12 +21,13 @@ export class HomeComponent implements OnInit {
   ngOnInit() { }
 
   redeemCode():void {
-    this.dialogsService
-      .confirm('RISCATTA CODICE', 'Inserisci il codice da riscattare:')
-      .subscribe(res => {
-        this.result = res;
-        console.log(JSON.stringify(res));
-      });
+    this.router.navigate(['/redeemcode']);
+    // this.dialogsService
+    //   .confirm('RISCATTA CODICE', 'Inserisci il codice da riscattare:')
+    //   .subscribe(res => {
+    //     this.result = res;
+    //     console.log(JSON.stringify(res));
+    //   });
   }
 
   buyDiamonds():void {

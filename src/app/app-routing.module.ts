@@ -8,15 +8,15 @@ import { ConfirmregistrationComponent } from './components/confirmregistration/c
 import { SubscribeComponent } from './components/subscribe/subscribe.component';
 import { PaypalComponent } from './components/paypal/paypal.component';
 import { PaymentComponent } from './components/payment/payment.component';
-import { SubscriptionpaymentComponent} from "./components/subscriptionpayment/subscriptionpayment.component";
+import { SubscriptionpaymentComponent} from './components/subscriptionpayment/subscriptionpayment.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SubscribeGuard } from './guards/subscribe.guard';
-import { RegisterGuard} from './guards/register.guard';
-import { MapComponent } from "./components/map/map.component";
+import { RegisterGuard } from './guards/register.guard';
+import { MapComponent } from './components/map/map.component';
 import { OrderComponent } from './components/order/order.component';
 import { OrdersummaryComponent } from './components/ordersummary/ordersummary.component';
-import { OrdersListComponent} from "./components/orders-list/orders-list.component";
-//  { path: '', component: HomeComponent,canActivate: [AuthGuard] },
+import { OrdersListComponent } from './components/orders-list/orders-list.component';
+import { RedeemcodeComponent } from './components/redeemcode/redeemcode.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -32,6 +32,7 @@ const routes: Routes = [
   { path: 'order', component: OrderComponent, canActivate: [AuthGuard] },
   { path: 'ordersummary', component: OrdersummaryComponent, canActivate: [AuthGuard] },
   { path: 'orderslist', component: OrdersListComponent, canActivate: [AuthGuard] },
+  { path: 'redeemcode', component: RedeemcodeComponent, canActivate: [AuthGuard] },
 
   // otherwise go to home
   { path: '**', redirectTo: '' }

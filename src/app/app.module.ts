@@ -42,6 +42,7 @@ import { AlertdialogComponent } from './components/alertdialog/alertdialog.compo
 import { OrderComponent } from './components/order/order.component';
 import { OrdersummaryComponent } from './components/ordersummary/ordersummary.component';
 import { OrdersListComponent } from './components/orders-list/orders-list.component';
+import { RedeemcodeComponent } from './components/redeemcode/redeemcode.component';
 
 // SERVICES
 import { Location } from "@angular/common";
@@ -59,6 +60,7 @@ import { CustomerService} from "./services/customer.service";
 import { ColorService} from "./services/color.service";
 import { OrderService} from "./services/order.service";
 import { SendmailService} from "./services/sendmail.service";
+import { RedeemcodeService} from "./services/redeemcode.service";
 
 // PIPES
 import { DatePipe } from '@angular/common';
@@ -80,7 +82,8 @@ import { DatePipe } from '@angular/common';
     AlertdialogComponent,
     OrderComponent,
     OrdersummaryComponent,
-    OrdersListComponent
+    OrdersListComponent,
+    RedeemcodeComponent
   ],
   imports: [
     BrowserModule,
@@ -124,7 +127,8 @@ import { DatePipe } from '@angular/common';
     CustomerService,
     ColorService,
     OrderService,
-    SendmailService
+    SendmailService,
+    RedeemcodeService
   ],
   entryComponents: [ AlertdialogComponent ],
   bootstrap: [AppComponent]
