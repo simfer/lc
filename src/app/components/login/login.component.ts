@@ -45,8 +45,15 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/confirmregistration']);
       },
       error => {
-        console.log(error);
-        this.alertService.error(error);
+        console.log(error.status);
+        let errorMessage = '';
+        switch(error.status) {
+          case 404:
+            errorMessage  = 'Nickname e/o password non validi!';
+            break;
+          default:
+        }
+        this.alertService.error(errorMessage);
         this.loading = false;
       });
   }

@@ -36,7 +36,6 @@ import { ConfirmregistrationComponent } from './components/confirmregistration/c
 import { SubscribeComponent } from './components/subscribe/subscribe.component';
 import { PaypalComponent } from './components/paypal/paypal.component';
 import { PaymentComponent } from './components/payment/payment.component';
-import { SubscriptionpaymentComponent } from './components/subscriptionpayment/subscriptionpayment.component';
 import { MapComponent } from './components/map/map.component';
 import { AlertdialogComponent } from './components/alertdialog/alertdialog.component';
 import { OrderComponent } from './components/order/order.component';
@@ -77,7 +76,6 @@ import { DatePipe } from '@angular/common';
     SubscribeComponent,
     PaypalComponent,
     PaymentComponent,
-    SubscriptionpaymentComponent,
     MapComponent,
     AlertdialogComponent,
     OrderComponent,

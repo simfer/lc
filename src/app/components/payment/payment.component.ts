@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {Router} from "@angular/router";
-import {AlertService} from '../../services/alert.service';
+import { Router, ActivatedRoute } from "@angular/router";
+import { AlertService } from '../../services/alert.service';
+import { Location} from "@angular/common";
 
 @Component({
   selector: 'app-payment',
@@ -11,6 +12,10 @@ export class PaymentComponent implements OnInit {
   favoritePayMethod: string = 'Paypal';
   paymentDisabled: boolean = false;
 
+  order: any;
+
+  amount = '';
+
   payMethods = [
     'Paypal',
     'Visa',
@@ -18,9 +23,16 @@ export class PaymentComponent implements OnInit {
     'Mastercard',
   ];
 
-  constructor(private router: Router,private alertService: AlertService) { }
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private location: Location,
+    private alertService: AlertService) { }
 
   ngOnInit() {
+    this.order = JSON.parse(sessionStorage.getItem("currentOrder"));
+    console.log(this.order.totalAmount);
+    //sessionStorage.removeItem('amount');
   }
 
   paymentClick(event): void {
@@ -31,6 +43,10 @@ export class PaymentComponent implements OnInit {
 
   payNow(): void {
     this.router.navigate(['/paypal']);
+  }
+
+  goBack() {
+    this.location.back();
   }
 
 }

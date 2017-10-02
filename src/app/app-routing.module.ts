@@ -8,7 +8,6 @@ import { ConfirmregistrationComponent } from './components/confirmregistration/c
 import { SubscribeComponent } from './components/subscribe/subscribe.component';
 import { PaypalComponent } from './components/paypal/paypal.component';
 import { PaymentComponent } from './components/payment/payment.component';
-import { SubscriptionpaymentComponent} from './components/subscriptionpayment/subscriptionpayment.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SubscribeGuard } from './guards/subscribe.guard';
 import { RegisterGuard } from './guards/register.guard';
@@ -26,7 +25,6 @@ const routes: Routes = [
   { path: 'confirmregistration', component: ConfirmregistrationComponent, canActivate: [AuthGuard, RegisterGuard] },
   { path: 'subscribe', component: SubscribeComponent, canActivate: [AuthGuard, SubscribeGuard] },
   { path: 'payment', component: PaymentComponent, canActivate: [AuthGuard] },
-  { path: 'subscriptionpayment', component: SubscriptionpaymentComponent, canActivate: [AuthGuard] },
   { path: 'paypal', component: PaypalComponent, canActivate: [AuthGuard] },
   { path: 'map', component: MapComponent, canActivate: [AuthGuard] },
   { path: 'order', component: OrderComponent, canActivate: [AuthGuard] },

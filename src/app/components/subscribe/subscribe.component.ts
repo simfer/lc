@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router} from "@angular/router";
 
 @Component({
   selector: 'app-subscribe',
@@ -7,8 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SubscribeComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
+  }
+
+  subscribeMe() {
+    let order = {
+      type: 'subscription',
+      totalAmount: '5'
+    };
+
+    console.log(order);
+
+    sessionStorage.setItem('currentOrder', JSON.stringify(order));
+
+    this.router.navigate(['/payment']);
   }
 }

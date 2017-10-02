@@ -64,6 +64,7 @@ export class OrderComponent implements OnInit {
     }
 
     let order = {
+      type: 'product',
       product: this.products[this.selectedProduct].idproduct,
       productDescription: this.products[this.selectedProduct].description,
       color: this.colors[this.selectedColor].idcolor,
@@ -75,7 +76,7 @@ export class OrderComponent implements OnInit {
 
     console.log(order);
 
-    localStorage.setItem('currentOrder', JSON.stringify(order));
+    sessionStorage.setItem('currentOrder', JSON.stringify(order));
     this.router.navigate(['/ordersummary']);
 
   }
