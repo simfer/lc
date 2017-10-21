@@ -10,7 +10,7 @@ export class SendmailService {
   constructor(private http: Http) {}
 
   sendMail(idcustomer: string) {
-    return this.http.get('/api/v1/sendmail/' + idcustomer, {headers: this.headers})
+    return this.http.get('server/api/v1/sendmail/' + idcustomer, {headers: this.headers})
       .map((response: Response) => {
         const res = response.json();
         console.log('send link to user');

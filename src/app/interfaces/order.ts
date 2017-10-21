@@ -1,9 +1,10 @@
 export interface Order {
   idorder: string;
   idcustomer: string;
+  customer: string;
   idproduct: string;
-  idcolor: string;
-  regions: string;
+  categories: string;
+  provinces: string;
   quantity: string;
   amount: string;
   orderdate: string;

@@ -7,7 +7,7 @@ import 'rxjs/add/operator/toPromise';
 export class ProductService {
   private host = window.location.hostname;
   private headers = new Headers({'Content-Type': 'application/json'});
-  private productsURL = '/api/v1/products/';
+  private productsURL = 'server/api/v1/products/';
 
   constructor(private http: Http) {}
 

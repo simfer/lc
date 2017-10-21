@@ -8,9 +8,8 @@ export class AuthenticationService {
   private headers = new Headers({'Content-Type': 'application/json'});
 
   constructor(private http: Http) {}
-
   login(username: string, password: string) {
-    return this.http.post('/api/v1/customerlogin', JSON.stringify({username: username, password: password}), {headers: this.headers})
+    return this.http.post('server/api/v1/customerlogin', JSON.stringify({username: username, password: password}), {headers: this.headers})
       .map((response: Response) => {
         const ls: Localstorage = response.json();
         if (ls.jwt) {

@@ -7,7 +7,7 @@ import 'rxjs/add/operator/toPromise';
 export class CustomerService {
   private host = window.location.hostname;
   private headers = new Headers({'Content-Type': 'application/json'});
-  private customersURL = '/api/v1/customers/';
+  private customersURL = 'server/api/v1/customers/';
 
   constructor(private http: Http) {}
 
@@ -55,7 +55,7 @@ export class CustomerService {
    * @returns {Promise<Customer>}
    */
   checkExistingUsername(username: string): Promise<any> {
-    let apiURL = '/api/v1/checkexistingusername/';
+    let apiURL = 'server/api/v1/checkexistingusername/';
     return this.http.post(apiURL, JSON.stringify({username:username}), {headers: this.headers})
       .toPromise()
       .then(response => response.json())

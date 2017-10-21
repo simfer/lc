@@ -13,8 +13,6 @@ export class LocalStorageService {
   constructor() { }
 
   announceLogin(username: string) {
-    console.log('announce login');
-    console.log(username);
     this.loginAnnouncedSource.next(username);
   }
 

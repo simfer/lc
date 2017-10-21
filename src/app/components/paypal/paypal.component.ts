@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { MdIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
-import {Http, Headers, Response} from '@angular/http';
-import 'rxjs/add/operator/map';
-import {Router} from "@angular/router";
+import { Http, Headers } from '@angular/http';
+import { Router } from "@angular/router";
 import { Order } from "../../interfaces/order";
 import { DatePipe } from '@angular/common';
-import { OrderService} from "../../services/order.service";
-import {MdSnackBar} from '@angular/material';
+import { OrderService } from "../../services/order.service";
+import {MdSnackBar } from '@angular/material';
+import 'rxjs/add/operator/map';
 
 @Component({
   selector: 'app-paypal',
@@ -32,6 +32,10 @@ export class PaypalComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit() {
+    //this.orderService.getOrdersTest('3','2').then(response =>{
+    //  console.log(response);
+    //});
+
     this.currentOrder = JSON.parse(sessionStorage.getItem('currentOrder'));
     this.currentCustomer = JSON.parse(localStorage.getItem("currentCustomer"));
 
@@ -45,19 +49,27 @@ export class PaypalComponent implements OnInit {
         const currentDate = new Date();
         let o = <Order>{};
 
-        let regions = '';
-        for (var i=0;i<this.currentOrder.regions.length;i++) {
-          regions += this.currentOrder.regions[i].region + '|';
+        let provinces = '';
+        for (var i=0;i<this.currentOrder.provinces.length;i++) {
+          provinces += this.currentOrder.provinces[i].province + '|';
         }
-        regions = regions.slice(0, -1);
+        provinces = provinces.slice(0, -1);
+
+        let categories = '';
+        for (var i=0;i<this.currentOrder.categories.length;i++) {
+          categories += this.currentOrder.categories[i].category + '|';
+        }
+        categories = categories.slice(0, -1);
 
         o.idcustomer = this.currentCustomer.idcustomer;
         o.idproduct = this.currentOrder.product;
-        o.idcolor = this.currentOrder.color;
+        o.categories = categories;
         o.amount = this.currentOrder.totalAmount;
         o.quantity = this.currentOrder.quantity;
-        o.regions = regions;
+        o.provinces = provinces;
         o.orderdate = this.datePipe.transform(currentDate, 'yyyy-MM-dd hh:mm:ss');
+
+        console.log(o);
 
         this.orderService.add(o)
           .then(response => {
@@ -72,7 +84,7 @@ export class PaypalComponent implements OnInit {
         break;
 
       case 'subscription':
-        this.http.put('/api/v1/customersubscribe/'+this.currentCustomer.idcustomer,{} , {headers: this.headers})
+        this.http.put('server/api/v1/customersubscribe/'+this.currentCustomer.idcustomer,{} , {headers: this.headers})
           .map(response => response.json())
           .subscribe(result => {
             this.result = result;

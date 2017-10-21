@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     // reset login status
     this.authenticationService.logout();
+    //this.localStorageService.announceLogout();
 
     // get return URL from route
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -51,7 +52,11 @@ export class LoginComponent implements OnInit {
           case 404:
             errorMessage  = 'Nickname e/o password non validi!';
             break;
+          case 401:
+            errorMessage  = 'Utente non autorizzato!';
+            break;
           default:
+            errorMessage  = 'Errore sconosciuto!';
         }
         this.alertService.error(errorMessage);
         this.loading = false;

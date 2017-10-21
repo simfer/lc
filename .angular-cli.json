@@ -6,10 +6,11 @@
   "apps": [
     {
       "root": "src",
-      "outDir": "dist",
+      "outDir": "lovechallenge",
       "assets": [
         "assets",
         "favicon.ico",
+        ".htaccess",
         "server"
       ],
       "index": "index.html",

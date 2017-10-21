@@ -53,13 +53,14 @@ import { SubscribeGuard } from './guards/subscribe.guard';
 import { RegisterGuard} from './guards/register.guard';
 import { LocalStorageService } from './services/local-storage.service'
 import { DialogsService } from "./services/dialogs.service";
-import { RegionService } from "./services/region.service";
+import { ProvinceService } from "./services/province.service";
 import { ProductService} from "./services/product.service";
 import { CustomerService} from "./services/customer.service";
-import { ColorService} from "./services/color.service";
+import { CategoryService} from "./services/category.service";
 import { OrderService} from "./services/order.service";
 import { SendmailService} from "./services/sendmail.service";
 import { RedeemcodeService} from "./services/redeemcode.service";
+import { CitiesService} from "./services/cities.service";
 
 // PIPES
 import { DatePipe } from '@angular/common';
@@ -120,13 +121,14 @@ import { DatePipe } from '@angular/common';
     DatePipe,
     LocalStorageService,
     DialogsService,
-    RegionService,
+    ProvinceService,
     ProductService,
     CustomerService,
-    ColorService,
+    CategoryService,
     OrderService,
     SendmailService,
-    RedeemcodeService
+    RedeemcodeService,
+    CitiesService
   ],
   entryComponents: [ AlertdialogComponent ],
   bootstrap: [AppComponent]

@@ -4,7 +4,7 @@
     &nbsp;
   </md-grid-tile>
     <md-grid-tile colspan="8" rowspan="2">
-      <h4>Seleziona il numero di diamanti che vuoi comprare, le regioni(max. 2) dove vuoi allocarli e il colore
+      <h4>Seleziona il numero di diamanti che vuoi comprare, le provincei(max. 2) dove vuoi allocarli e il categorye
       che preferisci!</h4>
     </md-grid-tile>
   <md-grid-tile colspan="3" rowspan="2">
@@ -18,18 +18,20 @@
     &nbsp;
   </md-grid-tile>
   <md-grid-tile colspan="2" rowspan="2">
-    <md-select placeholder="Scegli un colore" [(ngModel)]="selectedColor" name="color" style="width: 100%">
-      <md-option *ngFor="let color of colors; let i = index" [value]="i">
-        {{color.description}}
+    <md-select placeholder="Cosa cerchi?" [(ngModel)]="selectedCategories"
+               name="category"
+               multiple flex style="width: 100%">
+      <md-option *ngFor="let category of categories; let i = index" [value]="i">
+        {{category.description}}
       </md-option>
     </md-select>
   </md-grid-tile>
   <md-grid-tile colspan="8" rowspan="2">
-    <md-select placeholder="Scegli le regioni (max. 2)" [(ngModel)]="selectedRegions"
-               maxlength="2" name="region"
+    <md-select placeholder="Scegli le province (max. 2)" [(ngModel)]="selectedProvinces"
+               maxlength="2" name="province"
                multiple flex style="width: 100%">
-      <md-option *ngFor="let region of regions; let i = index" [value]="i">
-        {{region.description}}
+      <md-option *ngFor="let province of provinces; let i = index" [value]="i">
+        {{province.description}}
       </md-option>
     </md-select>
   </md-grid-tile>
@@ -43,7 +45,7 @@
       Importo totale: {{(selectedProduct?products[selectedProduct].price:0)}} €
     </md-grid-tile>
     <md-grid-tile colspan="2" rowspan="2">
-      <button md-raised-button [disabled]="!(f.valid && (selectedProduct!=='') && (selectedRegions!=='') && (selectedColor!==''))">Ordina ora <md-icon svgIcon="cart-plus"></md-icon></button>
+      <button md-raised-button [disabled]="!(f.valid && (selectedProduct!=='') && (selectedProvinces!=='') && (selectedCategory!==''))">Ordina ora <md-icon svgIcon="cart-plus"></md-icon></button>
     </md-grid-tile>
 </md-grid-list>
 </form>

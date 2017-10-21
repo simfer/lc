@@ -8,7 +8,7 @@ import 'rxjs/add/operator/toPromise';
 export class OrderService {
   private host = window.location.hostname;
   private headers = new Headers({'Content-Type': 'application/json'});
-  private ordersURL = '/api/v1/orders/';
+  private ordersURL = 'server/api/v1/orders/';
 
   constructor(private http: Http) {}
 
@@ -18,6 +18,21 @@ export class OrderService {
    */
   getOrders(): Promise<Order[]> {
     return this.http.get(this.ordersURL)
+      .toPromise()
+      .then(response => {
+        return response.json() as Order[];
+      })
+      .catch(this.handleError);
+  }
+
+  getOrdersTest(idstatus?: string, idproduct?: string): Promise<Order[]> {
+    let params = '?';
+    if (idstatus) params += `idstatus=${idstatus}`;
+    if (idproduct) params += `&idproduct=${idproduct}`;
+
+    const url = `${this.ordersURL}${params}`;
+    console.log(url);
+    return this.http.get(url)
       .toPromise()
       .then(response => {
         return response.json() as Order[];
@@ -44,7 +59,7 @@ export class OrderService {
    * @returns {Promise<Order>}
    */
   getCustomerOrders(idcustomer: string): Promise<CustomerOrder[]> {
-    let s = '/api/v1/customerorders/';
+    let s = 'server/api/v1/customerorders/';
     const url = `${s}${idcustomer}`;
     return this.http.get(url)
       .toPromise()

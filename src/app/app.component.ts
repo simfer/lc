@@ -22,20 +22,17 @@ export class AppComponent {
       uname => {
         this.username = uname;
       });
+
+    //this.subscription = localStorageService.logoutAnnounced$.subscribe(
+    //  empty => {
+    //    this.username = null;
+    //  });
+
     let ls: Localstorage = JSON.parse(localStorage.getItem('currentCustomer'));
 
     if (ls) {
       this.username = ls.username;
     }
-
-    //this.subscription = localStorageService.logoutAnnounced$.subscribe(
-    //  empty => {
-    //    this.currentCustomer = null;
-    //  });
-
-    //when the app refresh or initialized
-    //this.currentCustomer = JSON.parse(localStorage.getItem('currentCustomer'));
-
   }
 
   logout(): void {

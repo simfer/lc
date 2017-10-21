@@ -20,6 +20,7 @@ export class ConfirmregistrationComponent implements OnInit {
 
   ngOnInit() {
   }
+
   logout() {
     this.router.navigate(['/login']);
   }
@@ -30,7 +31,6 @@ export class ConfirmregistrationComponent implements OnInit {
     this.sendMailService.sendMail(customer.idcustomer)
       .subscribe(
         data => {
-          console.log(data);
           let snackBarRef = this.snackBar.open('Email inviata con successo!',null,{
             extraClasses: ['snackbar-class'],
             duration: 5000

@@ -8,18 +8,18 @@
   <md-grid-tile colspan="8" rowspan="4">
     <table height="100%">
       <tr>
-        <td><label>Prodotto:</label></td><td>&nbsp;{{this.order.productDescription}}</td>
+        <td><label>Stai acquistando:</label></td><td>&nbsp;{{this.order.productDescription}}</td>
       </tr>
       <tr>
-        <td><label>Colore:</label></td><td>&nbsp;{{this.order.colorDescription}}</td>
-      </tr>
-      <tr><td>&nbsp;</td></tr>
-      <tr>
-        <td><label>Regioni:</label></td><td><ul><li *ngFor="let region of order.regions">{{region.regionDescription}}</li></ul></td>
+        <td><label>per essere contattato da:</label></td><td><ul><li *ngFor="let category of order.categories">{{category.categoryDescription}}</li></ul></td>
       </tr>
       <tr><td>&nbsp;</td></tr>
       <tr>
-        <td><label>Importo:</label></td><td>&nbsp;{{this.order.totalAmount}} €</td>
+        <td><label>nelle province di:</label></td><td><ul><li *ngFor="let province of order.provinces">{{province.provinceDescription}}</li></ul></td>
+      </tr>
+      <tr><td>&nbsp;</td></tr>
+      <tr>
+        <td><label>Importo totale:</label></td><td>&nbsp;{{this.order.totalAmount}} €</td>
       </tr>
     </table>
   </md-grid-tile>

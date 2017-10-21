@@ -11,19 +11,16 @@
       all'indirizzo specificato. Fai click sul link contenuto nella email
       per confermare la registrazione e poi accedi con le tue
       credenziali. Se non hai rivevuto l'email di registrazione, ti invitiamo a controllare la casella di posta indesiderata.
-      Per inviare nuovamente l'email, fare click sul pulsante in basso a destra.
+      Per inviare nuovamente l'email, fare click sul pulsante in basso.
     </md-grid-tile>
     <md-grid-tile colspan="2" rowspan="2">
       <button md-raised-button (click)="logout()">Esci <md-icon svgIcon="exit-to-app"></md-icon></button>
     </md-grid-tile>
-    <md-grid-tile colspan="2" rowspan="2">
-      &nbsp;
+    <md-grid-tile colspan="4" rowspan="2">
+      <button md-raised-button (click)="resendConfirmationEmail()">Invia nuovamente email di registrazione <md-icon svgIcon="email-outline"></md-icon></button>
     </md-grid-tile>
     <md-grid-tile colspan="2" rowspan="2">
-      &nbsp;
-    </md-grid-tile>
-    <md-grid-tile colspan="2" rowspan="2">
-      <button md-raised-button (click)="resendConfirmationEmail()">Email di registrazione <md-icon svgIcon="email-outline"></md-icon></button>
+      <button md-raised-button (click)="logout()">Vai al login <md-icon svgIcon="check"></md-icon></button>
     </md-grid-tile>
   </md-grid-list>
 </form>

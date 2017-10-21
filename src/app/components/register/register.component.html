@@ -91,8 +91,8 @@
 									[formControl]="pobControl" placeholder="Luogo di nascita"
 									formControlName="placeofbirth" [mdAutocomplete]="autoPob">
 									<md-autocomplete #autoPob="mdAutocomplete">
-										<md-option *ngFor="let city of filteredCities | async" [value]="city">
-											{{ city }}
+										<md-option *ngFor="let city of filteredCities | async" [value]="city.city">
+											{{ city.city }}
 										</md-option>
 									</md-autocomplete>
 							</md-form-field>
