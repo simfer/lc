@@ -1,6 +1,4 @@
 <?php
-require_once 'config.php';
-
 require_once('vendor/autoload.php');
 
 use Zend\Config\Factory;
@@ -19,8 +17,14 @@ setlocale(LC_ALL, 'it_IT');
 
 //echo date('Y-m-d', strtotime($offset));
 
-$numCustomers = 1000;
-$numOrders = 1000;
+$numCustomers = 10;
+$numOrders = 100;
+
+
+
+$provincesList  = readProvinces();
+//var_dump($provincesList);
+//die();
 
 /*
  * CUSTOMERS
@@ -62,7 +66,7 @@ for ($i = 1; $i <= $numCustomers; $i++) {
 }
 
 $customers = trim($customers,',');
-echo $customers;
+//echo $customers;
 
 BulkInsert($customers);
 
@@ -73,11 +77,17 @@ BulkInsert($customers);
 
 
 
+
+
 truncateTable('orders');
 truncateTable('redeemcodes');
+truncateTable('order_categories');
+truncateTable('order_provinces');
 
-$orders = 'INSERT INTO orders (idcustomer,idproduct,idcolor,regions,quantity,amount,orderdate,idstatus,active,changedby,operation,changedat) VALUES ';
-$redeemCodes = 'INSERT INTO redeemcodes (idorder,idregion,redeemcode,active,changedby,operation,changedat) VALUES ';
+$orders = 'INSERT INTO orders (idcustomer,idproduct,quantity,amount,orderdate,idstatus,active,changedby,operation,changedat) VALUES ';
+$redeemCodes = 'INSERT INTO redeemcodes (idorder,idprovince,redeemcode,active,changedby,operation,changedat) VALUES ';
+$order_categories = 'INSERT INTO order_categories (idorder,idcategory) VALUES';
+$order_provinces = 'INSERT INTO order_provinces (idorder,idprovince) VALUES';
 
 $productPrices = array(1=>'5',2=>'10',3=>'20');
 $productQuantities = array(1=>'10',2=>'20',3=>'50');
@@ -87,8 +97,8 @@ for ($i = 1; $i <= $numOrders; $i++) {
     $offset = "+" . rand(1,5) . " day";
     $idcustomer = rand(1, $numCustomers);
     $idproduct = rand(1, 3);
-    $idcolor = rand(1, 2);
-    $regions = rand(1, 20) . (rand(0,1)==0 ? ('|' . rand(1, 20)) : '');
+    $categories = generateRandomCategories();
+    $provinces = $provincesList[rand(0, 102)][0] . (rand(0,1)==0 ? ('|' . $provincesList[rand(0, 102)][0]) : '');
     $quantity = $productQuantities[$idproduct];
     $amount = $productPrices[$idproduct];
     $orderdate = date('Y-m-d H:i:s', strtotime($offset));
@@ -97,8 +107,6 @@ for ($i = 1; $i <= $numOrders; $i++) {
     $order = array(
         'idcustomer' => $idcustomer,
         'idproduct' => $idproduct,
-        'idcolor' => $idcolor,
-        'regions' => $regions,
         'quantity' => $quantity,
         'amount' => $amount,
         'orderdate' => $orderdate,
@@ -106,21 +114,34 @@ for ($i = 1; $i <= $numOrders; $i++) {
     );
     $orders .= GeneraQuery($order);
 
-    $arrayRegions = explode('|',$regions);
-    $numRegions = count($arrayRegions);
-    $q = $quantity / $numRegions;
+    // generate order_categories
+    $arrayCategories = explode('|',$categories);
+    $numCategories = count($arrayCategories);
+    for ($r = 0; $r < $numCategories; $r++) {
+        $order_categories .= '(' . $i . ',' . $arrayCategories[$r] . '),';
+    }
 
-    for ($r = 0; $r < $numRegions; $r++) {
+    // generate order_provinces
+    $arrayProvinces = explode('|',$provinces);
+    $numProvinces = count($arrayProvinces);
+    for ($r = 0; $r < $numProvinces; $r++) {
+        $order_provinces .= "(" . $i . ",'" . $arrayProvinces[$r] . "'),";
+    }
+
+    // generate redeem codes
+    $q = $quantity / $numProvinces;
+
+
+    for ($r = 0; $r < $numProvinces; $r++) {
         for ($j = 1; $j <= $q; $j++) {
             $idorder = $i;
-            $idregion = $arrayRegions[$r];
-            $redeemCode = generateRedeemCode($idcustomer,$counter);
+            $idprovince = $arrayProvinces[$r];
+            $redeemCode = generateRedeemCode($idorder,$idprovince);
             $rCode =  array(
                 'idorder' => $idorder,
-                'idregion' => $idregion,
+                'idprovince' => $idprovince,
                 'redeemCode' => $redeemCode
             );
-            //echo $idorder . ' - ' . $idregion . ' - ' . $redeemCode . PHP_EOL;
             $redeemCodes .= GeneraQuery($rCode);
             $counter += 1;
         }
@@ -128,14 +149,46 @@ for ($i = 1; $i <= $numOrders; $i++) {
 }
 
 $orders = trim($orders,',');
-echo $orders;
+//echo $orders;
 BulkInsert($orders);
 
 $redeemCodes = trim($redeemCodes,',');
-echo $redeemCodes;
+//echo $redeemCodes;
 BulkInsert($redeemCodes);
 
+$order_categories = trim($order_categories,',');
+//echo $order_categories;
+BulkInsert($order_categories);
 
+$order_provinces = trim($order_provinces,',');
+echo $order_provinces;
+BulkInsert($order_provinces);
+
+function readProvinces() {
+    try {
+        $config = Factory::fromFile('config/settings.php', true);
+        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
+
+        $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        try {
+
+            $sql = "select * from provinces";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll();
+
+            return $data;
+
+        } catch (PDOException $e) {
+            return $e->getMessage();
+        }
+        $conn = null;
+    } catch (PDOException $e) {
+        return $e->getMessage();
+    }
+}
 
 function truncateTable($tableName) {
     $fullSql = "";
@@ -178,7 +231,6 @@ function truncateTable($tableName) {
     }
 }
 
-
 function BulkInsert($query) {
     try {
         $config = Factory::fromFile('config/settings.php', true);
@@ -195,19 +247,8 @@ function BulkInsert($query) {
 
             $conn->commit();
 
-            //header('Content-type: application/json');
-            //echo json_encode(array(
-            //    'status' => 'success',
-            //    'result' => 'OK',
-            //    'sql' => $query
-            //));
-
         } catch (PDOException $e) {
-
             $conn->rollBack();
-
-            //header('HTTP/1.0 500 Internal Server Error');
-            //echo $e->getMessage();
         }
 
         $conn = null;
@@ -216,7 +257,6 @@ function BulkInsert($query) {
         echo $e->getMessage();
     }
 }
-
 
 function GeneraQuery($record)
 {
@@ -234,10 +274,14 @@ function GeneraQuery($record)
     return $sql;
 }
 
-function generateRedeemCode($customer, $index) {
-    return str_pad($customer, 4, '0', STR_PAD_LEFT)
-        . time() . str_pad($index, 6, '0', STR_PAD_LEFT);
+function generateRedeemCode($order, $province) {
+    return time() . getProvinceNumberCode($province);
 }
+
+/* function generateRedeemCode($order, $province) {
+    return str_pad($order, 4, '0', STR_PAD_LEFT)
+        . time() . getProvinceNumberCode($province);
+} */
 
 function FormatDBDate($dateToFormat)
 {
@@ -249,4 +293,14 @@ function FormatDBDate($dateToFormat)
     return $ddd;
 }
 
+function generateRandomCategories() {
+    $p = rand(1,7);
+    $r = (($p & 4)>0?'1|':'') . (($p & 2)>0?'2|':'') . (($p & 1)>0?'3':'');
+
+    return trim($r,'|');
+}
+function getProvinceNumberCode($c) {
+    return str_pad(ord($c[0])-64, 2, '0', STR_PAD_LEFT)
+        . str_pad(ord($c[1])-64, 2, '0', STR_PAD_LEFT);
+}
 ?>

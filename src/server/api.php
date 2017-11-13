@@ -1,5 +1,4 @@
 <?php
-include "config.php";
 
 define('AUTHORIZATION_CHECK_DISABLED', true);
 define('SERVER_HOSTNAME','http://localhost:8080/lovechallenge');
@@ -11,11 +10,17 @@ use Zend\Http\PhpEnvironment\Request;
 use Zend\Json;
 use Firebase\JWT\JWT;
 
+$config = Factory::fromFile('config/settings.php', true);
+$dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
+
 // this is to be removed and adjusted
 $loggedUser = 1;
 
 // get a new request
 $request = new Request();
+
+//echo $request->getQuery()->regions;
+//die();
 
 $request_parts = explode('/', $request->getQuery("url"));
 $object = (isset($request_parts[0]) ? $request_parts[0] : ''); //the first piece is the object
@@ -30,6 +35,77 @@ switch(strtolower($object)) {
         echo json_encode($res);
 
         break;
+    case 'confirmregistration':
+        if (checkAuthorization($request)) {
+            if ($request->isGet()) {
+                if ($element) {
+                    if ($request->getQuery()->tokenid) {
+                        $passedTokenId = $request->getQuery()->tokenid;
+                        try {
+                            $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+                            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                            $SQL = 'SELECT * FROM customers WHERE idcustomer = ?';
+                            $stmt = $conn->prepare($SQL);
+                            $stmt->execute([$element]);
+                            $rs = $stmt->fetch();
+                            if ($rs) { // if a record is found
+                                $registrationtoken = $rs['registrationtoken'];
+                                $active = $rs['active'];
+                                $registered = $rs['registered'];
+                                if ($registrationtoken && $active == 1 && $registered == 0) {
+                                    if (urldecode($registrationtoken) == $passedTokenId) {
+                                        try {
+                                            $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+                                            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                                            $SQLREGISTER = "UPDATE customers SET registrationtoken = null, registered = 1 WHERE idcustomer = " . $element;
+                                            $conn->beginTransaction();
+                                            $stmt = $conn->prepare($SQLREGISTER);
+                                            $stmt->execute();
+                                            $conn->commit();
+
+                                            //$res = array('tokenid'=>urldecode($registrationtoken),'passedtokenid'=>$passedTokenId);
+                                            //header('Content-type: application/json');
+                                            //echo json_encode($res);
+                                            echo 'Registratione confermata! Fai click <a href="http://localhost:4200/login">qui</a> per accedere con le tue credenziali!';
+
+                                        } catch (Exception $e) {
+                                            header('HTTP/1.0 500 Internal Server Error');
+                                            echo $e->getMessage();
+                                        }
+                                    } else {
+                                        header('HTTP/1.0 400 Bad Request');
+                                        echo "Invalid Token ID!";
+                                    }
+                                } else {
+                                    header('HTTP/1.0 400 Bad Request');
+                                    echo "Utente già registrato!";
+                                }
+                            } else { // user is not found
+                                header('HTTP/1.0 404 Not Found');
+                                echo 'User Not Found';
+                            }
+                        } catch (Exception $e) {
+                            header('HTTP/1.0 500 Internal Server Error');
+                            echo $e->getMessage();
+                        }
+                    } else {
+                        header('HTTP/1.0 400 Bad Request');
+                        echo "Token ID not specified!";
+                    }
+                } else {
+                    header('HTTP/1.0 400 Bad Request');
+                    echo "Customer id not specified!";
+                }
+            } else {
+                header('HTTP/1.0 405 Method Not Allowed');
+                echo "Method Not Allowed!";
+            }
+        } else { // password is not correct
+            header('HTTP/1.0 401 Unauthorized');
+            echo 'HTTP/1.0 401 Unauthorized';
+        }
+        break;
     case 'userlogin':
         if ($request->isPost()) {
             $body = $request->getContent();
@@ -39,8 +115,6 @@ switch(strtolower($object)) {
                 $password = $data['password'];
                 if ($username && $password) {
                     try {
-                        $config = Factory::fromFile('config/settings.php', true);
-                        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
 
                         $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
                         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -123,9 +197,6 @@ switch(strtolower($object)) {
                 $password = $data['password'];
                 if ($username && $password) {
                     try {
-                        $config = Factory::fromFile('config/settings.php', true);
-                        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
-
                         $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
                         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -210,7 +281,7 @@ switch(strtolower($object)) {
                 $values = "";
 
                 $SQL = "INSERT INTO customers (";
-                $registrationtoken = base64_encode(random_bytes(32));
+                $registrationtoken = urldecode(base64_encode(random_bytes(32)));
                 $emailRecipient = $data["email"];
                 $data["registrationtoken"] = $registrationtoken;
                 $data["changedby"] = $loggedUser;
@@ -232,9 +303,6 @@ switch(strtolower($object)) {
                 $SQL .= $fields . ") VALUES (" . $values . ")";
 
                 try {
-                    $config = Factory::fromFile('config/settings.php', true);
-                    $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
-
                     $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -249,7 +317,7 @@ switch(strtolower($object)) {
                         // send registration email
                         $to = $emailRecipient;
                         $subject = 'Love Challenge - Conferma registrazione!';
-                        $message = 'Fai click <a href="' . SERVER_HOSTNAME . '/server/confirmregistration.php?idcust=' . $idcustomer . '&tokenId=' . $registrationtoken . '">qui</a> per confermare la tua registrazione!';
+                        $message = 'Fai click <a href="' . SERVER_HOSTNAME . '/server/api/v1/confirmregistration/' . $idcustomer . '?tokenid=' . $registrationtoken . '">qui</a> per confermare la tua registrazione!';
                         $headers = 'From: webmaster@example.com' . "\r\n" .
                             'Reply-To: webmaster@example.com' . "\r\n" .
                             'X-Mailer: PHP/' . phpversion();
@@ -290,7 +358,7 @@ switch(strtolower($object)) {
                     $SQL .= "changedby=" . $loggedUser . ",operation='U',changedat=SYSDATE() WHERE idcustomer = " . $element;
 
                     try {
-                        $conn = new PDO (DB_DSN, DB_USER, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+                        $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
                         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
                         try {
@@ -333,9 +401,6 @@ switch(strtolower($object)) {
             if ($request->isGet()) {
                 if ($element) {
                     try {
-                        $config = Factory::fromFile('config/settings.php', true);
-                        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
-
                         $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
                         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -354,8 +419,7 @@ switch(strtolower($object)) {
                             //send email
                             $to = $emailRecipient;
                             $subject = 'Love Challenge - Conferma registrazione!';
-                            $message = 'Fai click <a href="' . SERVER_HOSTNAME . '/server/confirmregistration.php?idcust=' . $idcustomer .
-                            '&tokenId=' . $registrationtoken . '">qui</a> per confermare la tua registrazione!';
+                            $message = 'Fai click <a href="' . SERVER_HOSTNAME . '/server/api/v1/confirmregistration/' . $idcustomer . '?tokenid=' . $registrationtoken . '">qui</a> per confermare la tua registrazione!';
                             $headers = 'From: webmaster@example.com' . "\r\n" .
                                 'Reply-To: webmaster@example.com' . "\r\n" .
                                 'X-Mailer: PHP/' . phpversion();
@@ -410,9 +474,6 @@ switch(strtolower($object)) {
 
                     if ($username) {
                         try {
-                            $config = Factory::fromFile('config/settings.php', true);
-                            $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
-
                             $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
                             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -722,87 +783,16 @@ switch(strtolower($object)) {
             echo 'HTTP/1.0 401 Unauthorized';
         }
         break;
-    case 'regions':
+    case 'provinces':
         if (checkAuthorization($request)) { // if the request is valid
             if ($request->isGet()) {
-                $SQL = "SELECT * FROM regions WHERE active = 1";
+                $SQL = "SELECT * FROM provinces WHERE 1=1";
                 if ($element) {
-                    $SQL .= " AND idregion = '" . $element . "'";
+                    $SQL .= " AND idprovince = '" . $element . "'";
                 }
                 $data = executeSelect($SQL);
                 header('Content-type: application/json');
                 echo json_encode($data);
-            } elseif ($request->isPost()) {
-                $body = $request->getContent();
-                if (!empty($body)) {
-                    $data = Json\Json::decode($body);
-                } else {
-                    header('HTTP/1.0 400 Bad Request');
-                    echo "Request body is empty!";
-                }
-
-                $fields = "";
-                $values = "";
-
-                $SQL = "INSERT INTO " . $object . " (";
-                foreach ($data as $k => $v) {
-                    if ($k =="password") $v = password_hash($v,PASSWORD_DEFAULT);
-                    $fields .= $k . ",";
-                    if ($v == "NULL") $values .= $v . ",";
-                    else $values .= "'" . addslashes($v) . "',";
-                }
-
-                $fields .= "active,changedby,operation,changedat";
-                $values .= "'1','" . $loggedUser . "','I',SYSDATE()";
-
-                $SQL .= $fields . ") VALUES (" . $values . ")";
-
-                $res = executeInsert($SQL);
-
-                header('Content-type: application/json');
-                echo json_encode($res);
-
-
-            } elseif ($request->isPut()) {
-                $body = $request->getContent();
-                if (!empty($body)) {
-                    $data = Json\Json::decode($body);
-                    if ($element == '') {
-                        header('HTTP/1.0 400 Bad Request');
-                        echo "Key value is not specified!";
-                    } else {
-                        $fields = "";
-                        $values = "";
-
-                        $SQL = "UPDATE " . $object . " SET ";
-                        foreach ($data as $k => $v) {
-                            if ($k =="password") $v = password_hash($v,PASSWORD_DEFAULT);
-                            $field = $k . " = ";
-                            if ($v != "NULL") $field .= "'" . addslashes($v) . "',";
-                            $SQL .= $field;
-                        }
-
-                        $SQL .= "changedby=" . $loggedUser . ",operation='U',changedat=SYSDATE() WHERE idregion = " . $element;
-
-                        $res = executeUpdate($SQL, $object, 'idregion', $element);
-
-                        header('Content-type: application/json');
-                        echo json_encode($res);
-
-                    }
-                } else {
-                    header('HTTP/1.0 400 Bad Request');
-                    echo "Request body is empty!";
-                }
-            } elseif ($request->isDelete()) {
-                $SQL = "UPDATE regions SET active = 0,changedby=" . $loggedUser . ",operation='D',changedat=SYSDATE() WHERE active = 1";
-                if ($element) {
-                    $SQL .= " AND idregion = '" . $element . "'";
-                }
-                $data = executeDelete($SQL);
-                header('Content-type: application/json');
-                echo json_encode($data);
-
             } else {
                 header('HTTP/1.0 405 Method Not Allowed');
                 echo "Method Not Allowed!";
@@ -816,41 +806,60 @@ switch(strtolower($object)) {
     case 'orders':
         if (checkAuthorization($request)) { // if the request is valid
             if ($request->isGet()) {
-                $SQL = "SELECT * FROM orders WHERE active = 1";
-                if ($element) {
-                    $SQL .= " AND idorder = '" . $element . "'";
+                //$SQL = "SELECT * FROM orders WHERE active = 1";
+                $SQL = "select a.*,CONCAT(b.lastname,' ',b.firstname) as customer,
+                  c.description as product, d.description as category,
+                  e.description as status
+                  from orders a
+                  inner join customers b on a.idcustomer=b.idcustomer
+                  inner join products c on a.idproduct = c.idproduct
+                  inner join categories d on a.idcategory = d.idcategory
+                  inner join statuses e on a.idstatus = e.idstatus
+                  where a.active=1";
+
+                if ($element) { // here I'm searching for a specific order ID
+                    $SQL .= " AND a.idorder = '" . $element . "'";
+                } else { // if no order ID is specified I check if another parameter like idstatus has been specified
+                    if ($request->getQuery()->idstatus) {
+                        $SQL .= " AND a.idstatus = '" . $request->getQuery()->idstatus . "'";
+                    }
+                    if ($request->getQuery()->idproduct) {
+                        $SQL .= " AND a.idproduct = '" . $request->getQuery()->idproduct . "'";
+                    }
                 }
+
+
+                $SQL .= " order by idorder desc";
                 $data = executeSelect($SQL);
                 header('Content-type: application/json');
                 echo json_encode($data);
-            } elseif ($request->isPost()) {
+            }
+            elseif ($request->isPost()) {
                 $body = $request->getContent();
                 if (!empty($body)) {
-                    $data = Json\Json::decode($body);
+                    $data = Json\Json::decode($body,true);
                 } else {
                     header('HTTP/1.0 400 Bad Request');
                     echo "Request body is empty!";
                 }
 
-                $fields = "";
-                $values = "";
+                $SQL = "INSERT INTO orders (idcustomer,idproduct,quantity,amount,orderdate,active,changedby,operation,changedat) VALUES(";
+                $SQL .= $data["idcustomer"] . ",";
+                $SQL .= $data["idproduct"] . ",";
+                $SQL .= $data["quantity"] . ",";
+                $SQL .= $data["amount"] . ",";
+                $SQL .= "'". $data["orderdate"] . "',";
+                $SQL .= "'1','" . $loggedUser . "','I',SYSDATE())";
 
-                $SQL = "INSERT INTO " . $object . " (";
-                foreach ($data as $k => $v) {
-                    if ($k =="password") $v = password_hash($v,PASSWORD_DEFAULT);
-                    $fields .= $k . ",";
-                    if ($v == "NULL") $values .= $v . ",";
-                    else $values .= "'" . addslashes($v) . "',";
-                }
+                //$data["sql"] = $SQL;
 
-                $fields .= "active,changedby,operation,changedat";
-                $values .= "'1','" . $loggedUser . "','I',SYSDATE()";
-
-                $SQL .= $fields . ") VALUES (" . $values . ")";
+                //header('Content-type: application/json');
+                //echo json_encode($data);
+                //die();
 
                 $res = null;
                 try {
-                    $conn = new PDO (DB_DSN, DB_USER, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+                    $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
                     try {
@@ -860,34 +869,62 @@ switch(strtolower($object)) {
                         $lastInsertID = $conn->lastInsertId();
 
 
-                        $d = Json\Json::decode($body,Json\Json::TYPE_ARRAY);
-                        $r = $d["regions"];
-                        $q = $d["quantity"];
-                        $idcustomer = $d["idcustomer"];
-                        $regions = explode('|', $r);
-                        $numberOfRegions = sizeof($regions);
-                        $whole = floor($q / $numberOfRegions);
+                        //$d = Json\Json::decode($body,Json\Json::TYPE_ARRAY);
+                        $p = $data["provinces"];
+                        $c = $data["categories"];
+                        $q = $data["quantity"];
+                        $idcustomer = $data["idcustomer"];
+                        $numberOfProvinces = sizeof($p);
+                        $numberOfCategories = sizeof($c);
 
-                        $SQL = 'INSERT INTO redeemcodes (idorder,idregion,redeemcode,changedby,changedat) VALUES ';
+                        $whole = floor($q / $numberOfProvinces);
+
+                        $SQL = 'INSERT INTO redeemcodes (idorder,idprovince,redeemcode,changedby,changedat) VALUES ';
+
+                        $SQLCategories = 'INSERT INTO order_categories (idorder,idcategory) VALUES ';
+                        $SQLProvinces = 'INSERT INTO order_provinces (idorder,idprovince) VALUES ';
+
+                        for ($i = 0; $i < $numberOfCategories; $i++) {
+                            $SQLCategories .= "(" . $lastInsertID . ",'". $c[$i]['category'] .  "'),";
+                        }
+                        $SQLCategories = trim($SQLCategories,',');
+                        $stmt = $conn->prepare($SQLCategories);
+                        $stmt->execute();
+
+                        for ($i = 0; $i < $numberOfProvinces; $i++) {
+                            $SQLProvinces .= "(" . $lastInsertID . ",'". $p[$i]['province'] .  "'),";
+                        }
+                        $SQLProvinces = trim($SQLProvinces,',');
+                        $stmt = $conn->prepare($SQLProvinces);
+                        $stmt->execute();
 
                         $values = '';
                         $counter = 1;
-                        for ($i = 0; $i < $numberOfRegions; $i++) {
+                        for ($i = 0; $i < $numberOfProvinces; $i++) {
                             for ($j = 1; $j <= $whole; $j++) {
-                                $values .= "(" . $lastInsertID . "," . $regions[$i] . ",'" . generateRedeemCode($idcustomer, $counter) . "'," . $loggedUser . ",SYSDATE()),";
+                                $values .= "(" . $lastInsertID . ",'" . $p[$i]['province'] . "','" . generateRedeemCode($idcustomer, $counter) . "'," . $loggedUser . ",SYSDATE()),";
                                 $counter += 1;
                             }
                         }
-                        for ($j = 1; $j <= ($q - $whole * $numberOfRegions); $j++) {
-                            $values .= "(" . $lastInsertID . "," . $regions[0] . ",'" . generateRedeemCode($idcustomer, $counter) . "'," . $loggedUser . ",SYSDATE()),";
+                        for ($j = 1; $j <= ($q - $whole * $numberOfProvinces); $j++) {
+                            $values .= "(" . $lastInsertID . ",'" . $p[0]['province'] . "','" . generateRedeemCode($idcustomer, $counter) . "'," . $loggedUser . ",SYSDATE()),";
                         }
 
                         $SQL .= trim($values,',');
 
+                        //$data["sql"] = $SQLCategories;
+                        //header('Content-type: application/json');
+                        //echo json_encode($data);
+                        //die();
+
                         $stmt = $conn->prepare($SQL);
                         $stmt->execute();
 
-                        $res = array('lastInsertID'=>$lastInsertID);
+                        $res = array(
+                            'lastInsertID'=>$lastInsertID,
+                            'cate' =>$c,
+                            'prov' =>$p
+                        );
 
 
                         $conn->commit();
@@ -902,69 +939,116 @@ switch(strtolower($object)) {
 
                 header('Content-type: application/json');
                 echo json_encode($res);
-
-
-            } elseif ($request->isPut()) {
-                $body = $request->getContent();
-                if (!empty($body)) {
-                    $data = Json\Json::decode($body);
-                    if ($element == '') {
-                        header('HTTP/1.0 400 Bad Request');
-                        echo "Key value is not specified!";
-                    } else {
-                        $fields = "";
-                        $values = "";
-
-                        $SQL = "UPDATE " . $object . " SET ";
-                        foreach ($data as $k => $v) {
-                            if ($k =="password") $v = password_hash($v,PASSWORD_DEFAULT);
-                            $field = $k . " = ";
-                            if ($v != "NULL") $field .= "'" . addslashes($v) . "',";
-                            $SQL .= $field;
-                        }
-
-                        $SQL .= "changedby=" . $loggedUser . ",operation='U',changedat=SYSDATE() WHERE idorder = " . $element;
-
-                        $res = executeUpdate($SQL, $object, 'idorder', $element);
-
-                        header('Content-type: application/json');
-                        echo json_encode($res);
-
-                    }
-                } else {
-                    header('HTTP/1.0 400 Bad Request');
-                    echo "Request body is empty!";
-                }
-            } elseif ($request->isDelete()) {
-                $SQL = "UPDATE orders SET active = 0,changedby=" . $loggedUser . ",operation='D',changedat=SYSDATE() WHERE active = 1";
-                if ($element) {
-                    $SQL .= " AND idorder = '" . $element . "'";
-                }
-                $data = executeDelete($SQL);
-                header('Content-type: application/json');
-                echo json_encode($data);
-
-            } else {
+            }
+            else {
                 header('HTTP/1.0 405 Method Not Allowed');
                 echo "Method Not Allowed!";
             }
-
         } else { // password is not correct
             header('HTTP/1.0 401 Unauthorized');
             echo 'HTTP/1.0 401 Unauthorized';
+        }
+        break;
+    case 'availablecategories':
+        if ($request->isGet()) {
+            if ($element) {
+                try {
+                    $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                    $SQL ="select idcategory,description from available_redeemcodes where redeemcode = '" . $element . "' ORDER BY idcategory";
+
+                    $data = executeSelect($SQL);
+                    if ($data) { // if a record is found
+                        header('Content-type: application/json');
+                        echo json_encode($data);
+                    } else { // user is not found
+                        header('HTTP/1.0 404 Not Found');
+                        echo 'ENOTFOUND';
+                    }
+                } catch (Exception $e) {
+                    header('HTTP/1.0 500 Internal Server Error');
+                    echo $e->getMessage();
+                }
+            } else {
+                header('HTTP/1.0 400 Bad Request');
+                echo "EPARAMNOTSPECIFIED";
+            }
+        } else {
+            header('HTTP/1.0 405 Method Not Allowed');
+            echo "EMETHODNOTALLOWED";
+        }
+        break;
+    case 'availableorders':
+        if ($request->isGet()) {
+            $redeemCode = $request->getQuery()->redeemcode;
+            $category = $request->getQuery()->category;
+
+
+            if ($redeemCode && $category) {
+                try {
+                    $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                    $SQL = "select a.idredeemcode,d.username,d.mobile from redeemcodes a 
+                      inner join order_categories b on a.idorder=b.idorder
+                      inner join orders c on a.idorder=c.idorder
+                      inner join customers d on c.idcustomer = d.idcustomer
+                      where a.redeemcode = '" . $redeemCode . "' and a.redeemed=0
+                      and b.idcategory=" . $category . " order by idredeemcode asc limit 1";
+
+                    $data = executeSelect($SQL);
+                    if ($data) { // if a record is found
+                        header('Content-type: application/json');
+                        echo json_encode($data);
+                    } else { // user is not found
+                        header('HTTP/1.0 404 Not Found');
+                        echo 'ENOTFOUND';
+                    }
+                } catch (Exception $e) {
+                    header('HTTP/1.0 500 Internal Server Error');
+                    echo $e->getMessage();
+                }
+            } else {
+                header('HTTP/1.0 400 Bad Request');
+                echo "EPARAMNOTSPECIFIED";
+            }
+            /*
+            if ($element) {
+            } else {
+                header('HTTP/1.0 400 Bad Request');
+                echo "EPARAMNOTSPECIFIED";
+            }
+            */
+        } else {
+            header('HTTP/1.0 405 Method Not Allowed');
+            echo "EMETHODNOTALLOWED";
         }
         break;
     case 'customerorders':
         if (checkAuthorization($request)) { // if the request is valid
             if ($request->isGet()) {
                 if ($element) {
-                    $SQL = "SELECT a.idorder,b.description as color,c.description as product,
-                    a.regions,a.amount,a.orderdate,d.description as status
-                    FROM orders a 
-                    inner join colors b on a.idcolor=b.idcolor
-                    inner join products c on a.idproduct=c.idproduct
-                    inner join statuses d on a.idstatus=d.idstatus
-                    where a.active = 1 AND idcustomer = '" . $element . "' ORDER BY a.idorder DESC";
+
+                    $SQL = "SELECT a.idorder,
+                    (SELECT GROUP_CONCAT(e.description SEPARATOR ', ')
+						FROM order_categories d
+						INNER JOIN categories e ON d.idcategory = e.idcategory
+						WHERE d.idorder=a.idorder
+						GROUP BY d.idorder) as categories,
+                    b.description as product,
+                    (SELECT GROUP_CONCAT(g.description SEPARATOR ', ')
+						FROM order_provinces f
+						INNER JOIN provinces g ON f.idprovince = g.idprovince
+						WHERE f.idorder=a.idorder
+						GROUP BY f.idorder) as provinces,
+                    a.amount,a.orderdate,
+					c.description as status
+                      FROM orders a
+                      INNER JOIN products b ON a.idproduct = b.idproduct  
+                      INNER JOIN statuses c ON a.idstatus = c.idstatus  
+                      WHERE a.active = 1 AND a.idcustomer = '" . $element . "' ORDER BY a.idorder DESC";
+
                     $data = executeSelect($SQL);
                     header('Content-type: application/json');
                     echo json_encode($data);
@@ -982,12 +1066,12 @@ switch(strtolower($object)) {
             echo 'HTTP/1.0 401 Unauthorized';
         }
         break;
-    case 'colors':
+    case 'categories':
         if (checkAuthorization($request)) { // if the request is valid
             if ($request->isGet()) {
-                $SQL = "SELECT * FROM colors WHERE active = 1";
+                $SQL = "SELECT * FROM categories WHERE active = 1";
                 if ($element) {
-                    $SQL .= " AND idcolor = '" . $element . "'";
+                    $SQL .= " AND idcategory = '" . $element . "'";
                 }
                 $data = executeSelect($SQL);
                 header('Content-type: application/json');
@@ -1042,9 +1126,9 @@ switch(strtolower($object)) {
                             $SQL .= $field;
                         }
 
-                        $SQL .= "changedby=" . $loggedUser . ",operation='U',changedat=SYSDATE() WHERE idcolor = " . $element;
+                        $SQL .= "changedby=" . $loggedUser . ",operation='U',changedat=SYSDATE() WHERE idcategory = " . $element;
 
-                        $res = executeUpdate($SQL, $object, 'idcolor', $element);
+                        $res = executeUpdate($SQL, $object, 'idcategory', $element);
 
                         header('Content-type: application/json');
                         echo json_encode($res);
@@ -1055,9 +1139,9 @@ switch(strtolower($object)) {
                     echo "Request body is empty!";
                 }
             } elseif ($request->isDelete()) {
-                $SQL = "UPDATE colors SET active = 0,changedby=" . $loggedUser . ",operation='D',changedat=SYSDATE() WHERE active = 1";
+                $SQL = "UPDATE categories SET active = 0,changedby=" . $loggedUser . ",operation='D',changedat=SYSDATE() WHERE active = 1";
                 if ($element) {
-                    $SQL .= " AND idcolor = '" . $element . "'";
+                    $SQL .= " AND idcategory = '" . $element . "'";
                 }
                 $data = executeDelete($SQL);
                 header('Content-type: application/json');
@@ -1073,7 +1157,7 @@ switch(strtolower($object)) {
             echo 'HTTP/1.0 401 Unauthorized';
         }
         break;
-    case 'redeemcode':
+    case 'checkredeemcode':
         if ($request->isPost()) {
             $body = $request->getContent();
             if (!empty($body)) {
@@ -1081,35 +1165,38 @@ switch(strtolower($object)) {
                 $code = $data['code'];
                 if ($code) {
                     try {
-                        $config = Factory::fromFile('config/settings.php', true);
-                        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
-
                         $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
                         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-                        $sql ="SELECT c.username,c.mobile,d.description as region FROM redeemcodes a
-                          INNER JOIN orders b on a.idorder = b.idorder
-                          INNER JOIN customers c on b.idcustomer = c.idcustomer
-                          INNER JOIN regions d on a.idregion = d.idregion
-                          WHERE a.redeemcode = ? and a.redeemed = 0
-                          and c.active = 1";
+                        $sql ="SELECT a.*,
+                          (DATE_ADD(a.changedat, INTERVAL 30 DAY) < sysdate()) as expired 
+                          FROM redeemcodes a
+                          WHERE a.redeemcode = ?";
 
                         $stmt = $conn->prepare($sql);
                         $stmt->execute([$code]);
                         $rs = $stmt->fetch();
-
-
                         if ($rs) { // if a record is found
-                            $res = array(
-                                'username' => $rs['username'],
-                                'mobile' => $rs['mobile'],
-                                'region' => $rs['region']
-                                );
-                            header('Content-type: application/json');
-                            echo json_encode($res);
+                            if($rs['redeemed'] == 0) { // if the code has not been redeemed yet
+                                if($rs['expired'] == 0) { // if the code is not expired
+                                    $res = array(
+                                        'redeemcode' => $rs['redeemcode'],
+                                        'idredeemcode' => $rs['idredeemcode'],
+                                        'idorder' => $rs['idorder']
+                                    );
+                                    header('Content-type: application/json');
+                                    echo json_encode($res);
+                                } else { // user is not found
+                                    header('HTTP/1.0 404 Not Found');
+                                    echo 'EEXPIRED';
+                                }
+                            } else { // user is not found
+                                header('HTTP/1.0 404 Not Found');
+                                echo 'EALREADYREDEEMED';
+                            }
                         } else { // user is not found
                             header('HTTP/1.0 404 Not Found');
-                            echo 'HTTP/1.0 404 Not Found';
+                            echo 'ENOTFOUND';
                         }
                     } catch (Exception $e) {
                         header('HTTP/1.0 500 Internal Server Error');
@@ -1117,15 +1204,107 @@ switch(strtolower($object)) {
                     }
                 } else {
                     header('HTTP/1.0 400 Bad Request');
-                    echo 'Invalid user and/or password';
+                    echo 'EINVALIDCODE';
                 }
             } else {
                 header('HTTP/1.0 400 Bad Request');
-                echo "Request body is empty!";
+                echo "EEMPTYBODY";
             }
         } else {
             header('HTTP/1.0 405 Method Not Allowed');
-            echo "Method Not Allowed!";
+            echo "EMETHODNOTALLOWED";
+        }
+        break;
+    case 'redeemcodes':
+        if (checkAuthorization($request)) { // if the request is valid
+            if ($request->isGet()) {
+                $SQL = "SELECT * FROM redeemcodes WHERE active = 1";
+                if ($element) {
+                    $SQL .= " AND idredeemcode = '" . $element . "'";
+                }
+                $data = executeSelect($SQL);
+                header('Content-type: application/json');
+                echo json_encode($data);
+            }
+            elseif ($request->isPost()) {
+                $body = $request->getContent();
+                if (!empty($body)) {
+                    $data = Json\Json::decode($body);
+                } else {
+                    header('HTTP/1.0 400 Bad Request');
+                    echo "EEMPTYBODY";
+                }
+
+                $fields = "";
+                $values = "";
+
+                $SQL = "INSERT INTO " . $object . " (";
+                foreach ($data as $k => $v) {
+                    if ($k =="password") $v = password_hash($v,PASSWORD_DEFAULT);
+                    $fields .= $k . ",";
+                    if ($v == "NULL") $values .= $v . ",";
+                    else $values .= "'" . addslashes($v) . "',";
+                }
+
+                $fields .= "active,changedby,operation,changedat";
+                $values .= "'1','" . $loggedUser . "','I',SYSDATE()";
+
+                $SQL .= $fields . ") VALUES (" . $values . ")";
+
+                $res = executeInsert($SQL);
+
+                header('Content-type: application/json');
+                echo json_encode($res);
+
+
+            } elseif ($request->isPut()) {
+                $body = $request->getContent();
+                if (!empty($body)) {
+                    $data = Json\Json::decode($body);
+                    if ($element == '') {
+                        header('HTTP/1.0 400 Bad Request');
+                        echo "Key value is not specified!";
+                    } else {
+                        $fields = "";
+                        $values = "";
+
+                        $SQL = "UPDATE " . $object . " SET ";
+                        foreach ($data as $k => $v) {
+                            if ($k =="password") $v = password_hash($v,PASSWORD_DEFAULT);
+                            $field = $k . " = ";
+                            if ($v != "NULL") $field .= "'" . addslashes($v) . "',";
+                            $SQL .= $field;
+                        }
+
+                        $SQL .= "changedby=" . $loggedUser . ",operation='U',changedat=SYSDATE() WHERE idredeemcode = " . $element;
+
+                        $res = executeUpdate($SQL, $object, 'idredeemcode', $element);
+
+                        header('Content-type: application/json');
+                        echo json_encode($res);
+
+                    }
+                } else {
+                    header('HTTP/1.0 400 Bad Request');
+                    echo "EEMPTYBODY";
+                }
+            } elseif ($request->isDelete()) {
+                $SQL = "UPDATE redeemcodes SET active = 0,changedby=" . $loggedUser . ",operation='D',changedat=SYSDATE() WHERE active = 1";
+                if ($element) {
+                    $SQL .= " AND idredeemcode = '" . $element . "'";
+                }
+                $data = executeDelete($SQL);
+                header('Content-type: application/json');
+                echo json_encode($data);
+
+            } else {
+                header('HTTP/1.0 405 Method Not Allowed');
+                echo "EMETHODNOTALLOWED";
+            }
+
+        } else { // password is not correct
+            header('HTTP/1.0 401 Unauthorized');
+            echo 'EUNAUTHORIZED';
         }
         break;
     case 'cities':
@@ -1147,6 +1326,46 @@ switch(strtolower($object)) {
         } else { // password is not correct
             header('HTTP/1.0 401 Unauthorized');
             echo 'HTTP/1.0 401 Unauthorized';
+        }
+        break;
+    case 'getrandomcode':
+        if ($request->isGet()) {
+            $province = $request->getQuery()->province;
+            if ($province) {
+                try {
+                    $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                    $SQL = "SELECT redeemcode FROM redeemcodes 
+                      where redeemed=0 and idprovince='". $province . "'
+                      ORDER BY idredeemcode ASC LIMIT 1;";
+
+                    $data = executeSelect($SQL);
+                    if ($data) { // if a record is found
+                        header('Content-type: application/json');
+                        echo json_encode($data);
+                    } else { // user is not found
+                        header('HTTP/1.0 404 Not Found');
+                        echo 'ENOTFOUND';
+                    }
+                } catch (Exception $e) {
+                    header('HTTP/1.0 500 Internal Server Error');
+                    echo $e->getMessage();
+                }
+            } else {
+                header('HTTP/1.0 400 Bad Request');
+                echo "EPARAMNOTSPECIFIED";
+            }
+            /*
+            if ($element) {
+            } else {
+                header('HTTP/1.0 400 Bad Request');
+                echo "EPARAMNOTSPECIFIED";
+            }
+            */
+        } else {
+            header('HTTP/1.0 405 Method Not Allowed');
+            echo "EMETHODNOTALLOWED";
         }
         break;
 
@@ -1180,7 +1399,10 @@ function executeSelect($query) {
 function executeInsert($query) {
     $res = null;
     try {
-        $conn = new PDO (DB_DSN, DB_USER, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+        $config = Factory::fromFile('config/settings.php', true);
+        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
+
+        $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         try {
@@ -1204,7 +1426,10 @@ function executeUpdate($query, $object, $keyfield, $element) {
     $res = null;
 
     try {
-        $conn = new PDO (DB_DSN, DB_USER, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+        $config = Factory::fromFile('config/settings.php', true);
+        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
+
+        $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         try {
@@ -1233,7 +1458,10 @@ function executeUpdate($query, $object, $keyfield, $element) {
 function executeDelete($query) {
     $res = null;
     try {
-        $conn = new PDO (DB_DSN, DB_USER, DB_PASSWORD, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+        $config = Factory::fromFile('config/settings.php', true);
+        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
+
+        $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         try {
@@ -1302,6 +1530,8 @@ function checkAuthorization($req) {
     return $isAuthorized;
 }
 
+
 function generateRedeemCode($customer, $index) {
-    return str_pad($customer, 4, '0', STR_PAD_LEFT) . '-' . time() . str_pad($index, 2, '0', STR_PAD_LEFT); //date("Ymd");
+    return str_pad($customer, 4, '0', STR_PAD_LEFT)
+        . time() . str_pad($index, 6, '0', STR_PAD_LEFT);
 }

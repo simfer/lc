@@ -1,6 +1,6 @@
 <?php
 // ** MySQL settings ** //
-define('DB_DSN','mysql:host=localhost;dbname=lcdb');
+define('DB_DSN','mysql:host=localhost;dbname=simmaco');
 //define('DB_HOST','localhost');
 define('DB_USER', 'root');     // Your MySQL username
 define('DB_PASSWORD', 'Admin123'); // ...and password
