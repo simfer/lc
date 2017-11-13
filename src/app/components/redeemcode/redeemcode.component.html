@@ -1,0 +1,51 @@
+<md-grid-list cols="12" rowHeight="27px">
+  <md-grid-tile colspan="4" rowspan="20">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2" style="backgroundx: peru">
+    <h4>Riscatta il codice trovato nel diamante:</h4>
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2" style="backgroundx: peru">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2" style="backgroundx: lightgrey">
+    <md-input-container>
+      <input type="text" name="ctrlCodeToRedeem" [(ngModel)]="codeToRedeem" mdInput #ctrlCodeToRedeem="ngModel"
+             placeholder="Codice da riscattare" required minlength="14" maxlength="14">
+      <div class="mat-input-subscript-wrapper mat-form-field-subscript-wrapper" align="right">
+        <span style="font-size: 10px">{{codeToRedeem.length}}/14</span>
+      </div>
+      <md-error *ngIf="ctrlCodeToRedeem?.errors?.required">
+        Il codice è obbligatorio!
+      </md-error>
+      <md-error *ngIf="ctrlCodeToRedeem?.errors?.minlength">
+        Il codice deve essere lungo 14 caratteri!
+      </md-error>
+    </md-input-container>
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2" style="backgroundx: lightblue">
+    <button md-raised-button (click)="checkRedeemCode()">Verifica il codice! <md-icon svgIcon="check"></md-icon></button>
+  </md-grid-tile>
+  <md-grid-tile *ngIf="codeVerified" colspan="8" rowspan="2" style="backgroundx: chocolate">
+    <h4>Cosa cerchi?</h4>
+  </md-grid-tile>
+  <md-grid-tile *ngIf="codeVerified" colspan="4" rowspan="6" style="backgroundx: greenyellow">
+    <md-radio-group class="example-radio-group" [(ngModel)]="selectedCategory" (change)="categoryClick($event)" name="selectedCategory">
+      <md-radio-button class="example-radio-button" *ngFor="let category of categories; let i = index" [value]="i">
+        {{category.description}}
+      </md-radio-button>
+    </md-radio-group>
+  </md-grid-tile>
+  <md-grid-tile *ngIf="codeVerified && redeemCodeSelected" colspan="4" rowspan="3" style="backgroundx: greenyellow">
+    <h4>Nickname: {{redeemCode.username}}</h4>&nbsp;
+  </md-grid-tile>
+  <md-grid-tile *ngIf="codeVerified && redeemCodeSelected" colspan="4" rowspan="3" style="backgroundx: greenyellow">
+    <button md-raised-button (click)="null">Ascolta messaggio vocale! <md-icon svgIcon="volume-high"></md-icon></button>
+  </md-grid-tile>
+  <md-grid-tile *ngIf="codeVerified && redeemCodeSelected" colspan="8" rowspan="2" style="backgroundx: gold">
+    <button md-raised-button (click)="doRedeemCode()">Conferma la scelta per ricevere il numero! <md-icon svgIcon="check"></md-icon></button>
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2" style="backgroundx: gold">
+    <button md-raised-button (click)="goBack()">Indietro <md-icon svgIcon="arrow-left"></md-icon></button>
+  </md-grid-tile>
+</md-grid-list>

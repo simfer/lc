@@ -18,7 +18,7 @@
     &nbsp;
   </md-grid-tile>
   <md-grid-tile colspan="2" rowspan="2">
-    <md-select placeholder="Cosa cerchi?" [(ngModel)]="selectedCategories"
+    <md-select placeholder="Partecipi come" [(ngModel)]="selectedCategories"
                name="category"
                multiple flex style="width: 100%">
       <md-option *ngFor="let category of categories; let i = index" [value]="i">

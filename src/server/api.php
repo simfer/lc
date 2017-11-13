@@ -2,6 +2,7 @@
 include "config.php";
 
 define('AUTHORIZATION_CHECK_DISABLED', true);
+define('SERVER_HOSTNAME','http://localhost:8080/lovechallenge');
 
 require_once('vendor/autoload.php');
 
@@ -22,6 +23,13 @@ $element = (isset($request_parts[1]) ? $request_parts[1] : ''); // the second is
 
 
 switch(strtolower($object)) {
+    case 'test':
+        $res = array('prova'=>'riuscita');
+
+        header('Content-type: application/json');
+        echo json_encode($res);
+
+        break;
     case 'userlogin':
         if ($request->isPost()) {
             $body = $request->getContent();
@@ -48,7 +56,7 @@ switch(strtolower($object)) {
                                 $tokenId    = base64_encode(random_bytes(32));
                                 $issuedAt   = time();
                                 $notBefore  = $issuedAt;  //Adding 0 seconds
-                                $expire     = $notBefore + 604800; // Adding 60 seconds
+                                $expire     = $notBefore + 3600;
                                 $serverName = $config->get('serverName');
 
                                 $data = [
@@ -241,7 +249,7 @@ switch(strtolower($object)) {
                         // send registration email
                         $to = $emailRecipient;
                         $subject = 'Love Challenge - Conferma registrazione!';
-                        $message = 'Fai click <a href="http://localhost:8080/lovechallenge/server/confirmregistration.php?idcust=' . $idcustomer . '&tokenId=' . $registrationtoken . '">qui</a> per confermare la tua registrazione!';
+                        $message = 'Fai click <a href="' . SERVER_HOSTNAME . '/server/confirmregistration.php?idcust=' . $idcustomer . '&tokenId=' . $registrationtoken . '">qui</a> per confermare la tua registrazione!';
                         $headers = 'From: webmaster@example.com' . "\r\n" .
                             'Reply-To: webmaster@example.com' . "\r\n" .
                             'X-Mailer: PHP/' . phpversion();
@@ -321,13 +329,61 @@ switch(strtolower($object)) {
         }
         break;
     case 'sendmail':
-        $to = 'careter33@gustr.com';
-        $subject = 'Love Challenge - Conferma registrazione!';
-        $message = 'Conferma la tua registrazione!';
-        $headers = 'From: webmaster@example.com' . "\r\n" .
-            'Reply-To: webmaster@example.com' . "\r\n" .
-            'X-Mailer: PHP/' . phpversion();
-        mail($to, $subject, $message, $headers);
+        if (checkAuthorization($request)) { // if the request is valid
+            if ($request->isGet()) {
+                if ($element) {
+                    try {
+                        $config = Factory::fromFile('config/settings.php', true);
+                        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
+
+                        $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                        $SQL ='SELECT * FROM customers WHERE active = 1 AND registered = 0 AND idcustomer = ?';
+
+                        $stmt = $conn->prepare($SQL);
+                        $stmt->execute([$element]);
+                        $rs = $stmt->fetch();
+
+                        if ($rs) { // if a record is found
+                            $emailRecipient = $rs['email'];
+                            $idcustomer = $element;
+                            $registrationtoken = $rs['registrationtoken'];
+
+                            $res = array('customer_email'=>$rs['email']);
+                            //send email
+                            $to = $emailRecipient;
+                            $subject = 'Love Challenge - Conferma registrazione!';
+                            $message = 'Fai click <a href="' . SERVER_HOSTNAME . '/server/confirmregistration.php?idcust=' . $idcustomer .
+                            '&tokenId=' . $registrationtoken . '">qui</a> per confermare la tua registrazione!';
+                            $headers = 'From: webmaster@example.com' . "\r\n" .
+                                'Reply-To: webmaster@example.com' . "\r\n" .
+                                'X-Mailer: PHP/' . phpversion();
+                            mail($to, $subject, $message, $headers);
+                            $res = array('email'=>$emailRecipient);
+                            header('Content-type: application/json');
+                            echo json_encode($res);
+
+                        } else { // user is not found
+                            header('HTTP/1.0 404 Not Found');
+                            echo 'User Not Found';
+                        }
+                    } catch (Exception $e) {
+                        header('HTTP/1.0 500 Internal Server Error');
+                        echo $e->getMessage();
+                    }
+                } else {
+                    header('HTTP/1.0 400 Bad Request');
+                    echo "Customer id not specified!";
+                }
+            } else {
+                header('HTTP/1.0 405 Method Not Allowed');
+                echo "Method Not Allowed!";
+            }
+        } else { // password is not correct
+            header('HTTP/1.0 401 Unauthorized');
+            echo 'HTTP/1.0 401 Unauthorized';
+        }
         break;
     case 'unregisteredusers':
         if ($request->isGet()) {
@@ -347,7 +403,6 @@ switch(strtolower($object)) {
     case 'checkexistingusername':
         if (checkAuthorization($request)) { // if the request is valid
             if ($request->isPost()) {
-
                 $body = $request->getContent();
                 if (!empty($body)) {
                     $data = Json\Json::decode($body, true);
@@ -899,6 +954,34 @@ switch(strtolower($object)) {
             echo 'HTTP/1.0 401 Unauthorized';
         }
         break;
+    case 'customerorders':
+        if (checkAuthorization($request)) { // if the request is valid
+            if ($request->isGet()) {
+                if ($element) {
+                    $SQL = "SELECT a.idorder,b.description as color,c.description as product,
+                    a.regions,a.amount,a.orderdate,d.description as status
+                    FROM orders a 
+                    inner join colors b on a.idcolor=b.idcolor
+                    inner join products c on a.idproduct=c.idproduct
+                    inner join statuses d on a.idstatus=d.idstatus
+                    where a.active = 1 AND idcustomer = '" . $element . "' ORDER BY a.idorder DESC";
+                    $data = executeSelect($SQL);
+                    header('Content-type: application/json');
+                    echo json_encode($data);
+                } else {
+                    header('HTTP/1.0 400 Bad Request');
+                    echo "Customer id not specified!";
+                }
+            } else {
+                header('HTTP/1.0 405 Method Not Allowed');
+                echo "Method Not Allowed!";
+            }
+
+        } else { // password is not correct
+            header('HTTP/1.0 401 Unauthorized');
+            echo 'HTTP/1.0 401 Unauthorized';
+        }
+        break;
     case 'colors':
         if (checkAuthorization($request)) { // if the request is valid
             if ($request->isGet()) {
@@ -990,9 +1073,86 @@ switch(strtolower($object)) {
             echo 'HTTP/1.0 401 Unauthorized';
         }
         break;
+    case 'redeemcode':
+        if ($request->isPost()) {
+            $body = $request->getContent();
+            if (!empty($body)) {
+                $data = Json\Json::decode($body,true);
+                $code = $data['code'];
+                if ($code) {
+                    try {
+                        $config = Factory::fromFile('config/settings.php', true);
+                        $dsn = 'mysql:host=' . $config->get('database')->get('host') . ';dbname=' . $config->get('database')->get('name');
+
+                        $conn = new PDO($dsn, $config->get('database')->get('user'), $config->get('database')->get('password'));
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                        $sql ="SELECT c.username,c.mobile,d.description as region FROM redeemcodes a
+                          INNER JOIN orders b on a.idorder = b.idorder
+                          INNER JOIN customers c on b.idcustomer = c.idcustomer
+                          INNER JOIN regions d on a.idregion = d.idregion
+                          WHERE a.redeemcode = ? and a.redeemed = 0
+                          and c.active = 1";
+
+                        $stmt = $conn->prepare($sql);
+                        $stmt->execute([$code]);
+                        $rs = $stmt->fetch();
+
+
+                        if ($rs) { // if a record is found
+                            $res = array(
+                                'username' => $rs['username'],
+                                'mobile' => $rs['mobile'],
+                                'region' => $rs['region']
+                                );
+                            header('Content-type: application/json');
+                            echo json_encode($res);
+                        } else { // user is not found
+                            header('HTTP/1.0 404 Not Found');
+                            echo 'HTTP/1.0 404 Not Found';
+                        }
+                    } catch (Exception $e) {
+                        header('HTTP/1.0 500 Internal Server Error');
+                        echo $e->getMessage();
+                    }
+                } else {
+                    header('HTTP/1.0 400 Bad Request');
+                    echo 'Invalid user and/or password';
+                }
+            } else {
+                header('HTTP/1.0 400 Bad Request');
+                echo "Request body is empty!";
+            }
+        } else {
+            header('HTTP/1.0 405 Method Not Allowed');
+            echo "Method Not Allowed!";
+        }
+        break;
+    case 'cities':
+        if (checkAuthorization($request)) { // if the request is valid
+            if ($request->isGet()) {
+                //$SQL = "SELECT * FROM cities WHERE 1 = 1";
+                $SQL = "select idcity, CONCAT(city,' (',idprovince,')') as city from cities WHERE 1=1";
+                if ($element) {
+                    $SQL .= " AND idcity = '" . $element . "'";
+                }
+                $data = executeSelect($SQL);
+                header('Content-type: application/json');
+                echo json_encode($data);
+            } else {
+                header('HTTP/1.0 405 Method Not Allowed');
+                echo "Method Not Allowed!";
+            }
+
+        } else { // password is not correct
+            header('HTTP/1.0 401 Unauthorized');
+            echo 'HTTP/1.0 401 Unauthorized';
+        }
+        break;
 
     default:
-
+        header('HTTP/1.0 405 Method Not Allowed');
+        echo "API function not available!";
 }
 
 function executeSelect($query) {

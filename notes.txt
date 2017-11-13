@@ -1,0 +1,91 @@
+    case 'redeemcodes':
+        if (checkAuthorization($request)) { // if the request is valid
+            if ($request->isGet()) {
+                $SQL = "SELECT * FROM redeemcodes WHERE active = 1";
+                if ($element) {
+                    $SQL .= " AND idredeemcode = '" . $element . "'";
+                }
+                $data = executeSelect($SQL);
+                header('Content-type: application/json');
+                echo json_encode($data);
+            } elseif ($request->isPost()) {
+                $body = $request->getContent();
+                if (!empty($body)) {
+                    $data = Json\Json::decode($body);
+                } else {
+                    header('HTTP/1.0 400 Bad Request');
+                    echo "Request body is empty!";
+                }
+
+                $fields = "";
+                $values = "";
+
+                $SQL = "INSERT INTO " . $object . " (";
+                foreach ($data as $k => $v) {
+                    if ($k =="password") $v = password_hash($v,PASSWORD_DEFAULT);
+                    $fields .= $k . ",";
+                    if ($v == "NULL") $values .= $v . ",";
+                    else $values .= "'" . addslashes($v) . "',";
+                }
+
+                $fields .= "active,changedby,operation,changedat";
+                $values .= "'1','" . $loggedUser . "','I',SYSDATE()";
+
+                $SQL .= $fields . ") VALUES (" . $values . ")";
+
+                $res = executeInsert($SQL);
+
+                header('Content-type: application/json');
+                echo json_encode($res);
+
+
+            } elseif ($request->isPut()) {
+                $body = $request->getContent();
+                if (!empty($body)) {
+                    $data = Json\Json::decode($body);
+                    if ($element == '') {
+                        header('HTTP/1.0 400 Bad Request');
+                        echo "Key value is not specified!";
+                    } else {
+                        $fields = "";
+                        $values = "";
+
+                        $SQL = "UPDATE " . $object . " SET ";
+                        foreach ($data as $k => $v) {
+                            if ($k =="password") $v = password_hash($v,PASSWORD_DEFAULT);
+                            $field = $k . " = ";
+                            if ($v != "NULL") $field .= "'" . addslashes($v) . "',";
+                            $SQL .= $field;
+                        }
+
+                        $SQL .= "changedby=" . $loggedUser . ",operation='U',changedat=SYSDATE() WHERE idredeemcode = " . $element;
+
+                        $res = executeUpdate($SQL, $object, 'idredeemcode', $element);
+
+                        header('Content-type: application/json');
+                        echo json_encode($res);
+
+                    }
+                } else {
+                    header('HTTP/1.0 400 Bad Request');
+                    echo "Request body is empty!";
+                }
+            } elseif ($request->isDelete()) {
+                $SQL = "UPDATE redeemcodes SET active = 0,changedby=" . $loggedUser . ",operation='D',changedat=SYSDATE() WHERE active = 1";
+                if ($element) {
+                    $SQL .= " AND idredeemcode = '" . $element . "'";
+                }
+                $data = executeDelete($SQL);
+                header('Content-type: application/json');
+                echo json_encode($data);
+
+            } else {
+                header('HTTP/1.0 405 Method Not Allowed');
+                echo "Method Not Allowed!";
+            }
+
+        } else { // password is not correct
+            header('HTTP/1.0 401 Unauthorized');
+            echo 'HTTP/1.0 401 Unauthorized';
+        }
+        break;

@@ -11,7 +11,7 @@
         <td><label>Stai acquistando:</label></td><td>&nbsp;{{this.order.productDescription}}</td>
       </tr>
       <tr>
-        <td><label>per essere contattato da:</label></td><td><ul><li *ngFor="let category of order.categories">{{category.categoryDescription}}</li></ul></td>
+        <td><label>per essere contattato come:</label></td><td><ul><li *ngFor="let category of order.categories">{{category.categoryDescription}}</li></ul></td>
       </tr>
       <tr><td>&nbsp;</td></tr>
       <tr>
@@ -19,7 +19,7 @@
       </tr>
       <tr><td>&nbsp;</td></tr>
       <tr>
-        <td><label>Importo totale:</label></td><td>&nbsp;{{this.order.totalAmount}} €</td>
+        <td><label>Importo totale:</label></td><td>&nbsp;{{this.order.amount}} €</td>
       </tr>
     </table>
   </md-grid-tile>

@@ -31,11 +31,10 @@ export class PaymentComponent implements OnInit {
 
   ngOnInit() {
     this.order = JSON.parse(sessionStorage.getItem("currentOrder"));
-    console.log(this.order.totalAmount);
-    //sessionStorage.removeItem('amount');
   }
 
   paymentClick(event): void {
+    // Only Paypal is enabled at moment
     if(event.value === 'Paypal') {
       this.paymentDisabled = false;
     } else this.paymentDisabled = true;

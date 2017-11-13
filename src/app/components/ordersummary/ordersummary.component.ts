@@ -15,15 +15,16 @@ export class OrdersummaryComponent implements OnInit {
   }
 
   ngOnInit() {
+    // gets the current order from the session storage
     this.order = JSON.parse(sessionStorage.getItem("currentOrder"));
   }
 
   confirmOrder() {
+    // if the user confirms the order, navigates to the payment page
     this.router.navigate(['/payment']);
   }
 
   goBack() {
-    sessionStorage.removeItem('currentOrder');
     this.location.back();
   }
 }

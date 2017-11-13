@@ -9,9 +9,6 @@ import { MdDialogRef } from "@angular/material";
 export class AlertdialogComponent {
   public title: string;
   public message: string;
-  public someresult = {
-    'redeemCode': ''
-  }
 
   constructor(public dialogRef: MdDialogRef<AlertdialogComponent>) {
 

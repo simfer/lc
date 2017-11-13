@@ -2,7 +2,8 @@
     "name": "i045523/server",
     "require": {
         "firebase/php-jwt": "^5.0",
-        "zendframework/zendframework": "^3.0"
+        "zendframework/zendframework": "^3.0",
+        "ramsey/uuid": "^3.7"
     },
     "license": "MIT",
     "authors": [

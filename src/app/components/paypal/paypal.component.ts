@@ -3,10 +3,10 @@ import { MdIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Http, Headers } from '@angular/http';
 import { Router } from "@angular/router";
-import { Order } from "../../interfaces/order";
+import { Order } from '../../interfaces/order';
 import { DatePipe } from '@angular/common';
 import { OrderService } from "../../services/order.service";
-import {MdSnackBar } from '@angular/material';
+import { MdSnackBar } from '@angular/material';
 import 'rxjs/add/operator/map';
 
 @Component({
@@ -32,10 +32,6 @@ export class PaypalComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit() {
-    //this.orderService.getOrdersTest('3','2').then(response =>{
-    //  console.log(response);
-    //});
-
     this.currentOrder = JSON.parse(sessionStorage.getItem('currentOrder'));
     this.currentCustomer = JSON.parse(localStorage.getItem("currentCustomer"));
 
@@ -44,34 +40,34 @@ export class PaypalComponent implements OnInit {
   }
 
   simulatePayment(): void {
-    switch (this.currentOrder.type) {
+    switch (this.currentOrder.productType) {
       case 'product':
         const currentDate = new Date();
-        let o = <Order>{};
+        let order = <Order>{};
 
-        let provinces = '';
-        for (var i=0;i<this.currentOrder.provinces.length;i++) {
-          provinces += this.currentOrder.provinces[i].province + '|';
-        }
-        provinces = provinces.slice(0, -1);
+        //let provinces = '';
+        //for (var i=0;i<this.currentOrder.provinces.length;i++) {
+        //  provinces += this.currentOrder.provinces[i].province + '|';
+        //}
+        //provinces = provinces.slice(0, -1);
 
-        let categories = '';
-        for (var i=0;i<this.currentOrder.categories.length;i++) {
-          categories += this.currentOrder.categories[i].category + '|';
-        }
-        categories = categories.slice(0, -1);
+        //let categories = '';
+        //for (var i=0;i<this.currentOrder.categories.length;i++) {
+        //  categories += this.currentOrder.categories[i].category + '|';
+        //}
+        //categories = categories.slice(0, -1);
 
-        o.idcustomer = this.currentCustomer.idcustomer;
-        o.idproduct = this.currentOrder.product;
-        o.categories = categories;
-        o.amount = this.currentOrder.totalAmount;
-        o.quantity = this.currentOrder.quantity;
-        o.provinces = provinces;
-        o.orderdate = this.datePipe.transform(currentDate, 'yyyy-MM-dd hh:mm:ss');
+        order.idcustomer = this.currentCustomer.idcustomer;
+        order.idproduct = this.currentOrder.idproduct;
+        order.categories = this.currentOrder.categories;
+        order.amount = this.currentOrder.amount;
+        order.quantity = this.currentOrder.quantity;
+        order.provinces = this.currentOrder.provinces;
+        order.orderdate = this.datePipe.transform(currentDate, 'yyyy-MM-dd hh:mm:ss');
 
-        console.log(o);
+        console.log(order);
 
-        this.orderService.add(o)
+         this.orderService.add(order)
           .then(response => {
             let orderNumber = response['lastInsertID'];
             let snackBarRef = this.snackBar.open('Ordine n.' + orderNumber + ' effettuato con successo!',null,{

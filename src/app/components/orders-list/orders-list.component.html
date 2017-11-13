@@ -1,0 +1,66 @@
+<md-grid-list cols="12" rowHeight="27px">
+  <md-grid-tile colspan="4" rowspan="14">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="2">
+    <h4>I miei acquisti:</h4>
+  </md-grid-tile>
+  <md-grid-tile colspan="8" rowspan="10">
+    <div class="example-container mat-elevation-z8">
+      <div class="example-header">
+        <md-form-field floatPlaceholder="never">
+          <input mdInput #filter placeholder="Cerca">
+        </md-form-field>
+      </div>
+
+      <md-table style="height: 180px; width: 95%; margin-left: 10px" #table [dataSource]="dataSource">
+        <ng-container mdColumnDef="idorder">
+          <md-header-cell *mdHeaderCellDef> N. Ordine </md-header-cell>
+          <md-cell *mdCellDef="let row"> {{row.idorder}} </md-cell>
+        </ng-container>
+
+        <ng-container mdColumnDef="product">
+          <md-header-cell *mdHeaderCellDef> Hai comprato </md-header-cell>
+          <md-cell *mdCellDef="let row"> {{row.product}} </md-cell>
+        </ng-container>
+
+        <ng-container mdColumnDef="categories">
+          <md-header-cell *mdHeaderCellDef> cercando </md-header-cell>
+          <md-cell *mdCellDef="let row"> {{row.categories}} </md-cell>
+        </ng-container>
+
+        <ng-container mdColumnDef="provinces">
+          <md-header-cell *mdHeaderCellDef> nelle province di </md-header-cell>
+          <md-cell *mdCellDef="let row"> {{row.provinces}} </md-cell>
+        </ng-container>
+
+        <ng-container mdColumnDef="orderdate">
+          <md-header-cell *mdHeaderCellDef> in data </md-header-cell>
+          <md-cell *mdCellDef="let row"> {{row.orderdate| date:'shortDate'}} </md-cell>
+        </ng-container>
+
+        <ng-container mdColumnDef="status">
+          <md-header-cell *mdHeaderCellDef> Stato </md-header-cell>
+          <md-cell *mdCellDef="let row"> {{row.status}} </md-cell>
+        </ng-container>
+
+        <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
+        <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
+
+
+      </md-table>
+    </div>
+  </md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="2">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="2">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="2">
+    &nbsp;
+  </md-grid-tile>
+  <md-grid-tile colspan="2" rowspan="2">
+    <button md-raised-button (click)="goBack()">Indietro <md-icon svgIcon="arrow-left"></md-icon></button>
+  </md-grid-tile>
+</md-grid-list>

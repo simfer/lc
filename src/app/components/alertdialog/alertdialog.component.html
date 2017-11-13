@@ -1,15 +1,7 @@
 <p>{{ title }}</p>
 <p>{{ message }}</p>
-<md-input-container>
-  <input type="text" name="redeemCode" [(ngModel)]="someresult.redeemCode" #redeemCode="ngModel" mdInput
-         placeholder="Codice" required minlength="16" maxlength="16">
-  <div class="mat-input-subscript-wrapper mat-form-field-subscript-wrapper" align="right">
-    <span style="font-size: 10px">{{someresult.redeemCode.length}}/16</span>
-  </div>
-  <md-error *ngIf="!redeemCode.valid">Il codice è obbligatorio (16 caratteri)!</md-error>
-</md-input-container>
 
 <button type="button" md-button
         (click)="dialogRef.close()">Cancel</button>
-<button type="button" md-raised-button [disabled]="!redeemCode.valid"
-        (click)="dialogRef.close(someresult)">OK</button>
+<button type="button" md-button
+        (click)="dialogRef.close('OK')">OK</button>

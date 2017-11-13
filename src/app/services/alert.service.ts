@@ -26,18 +26,48 @@ export class AlertService {
   success(message: string, keepAfterNavigationChange = false) {
         this.keepAfterNavigationChange = keepAfterNavigationChange;
         this.subject.next({ type: 'success', text: message });
-    }
+  }
 
-    error(message: string, keepAfterNavigationChange = false) {
+  error(message: string, keepAfterNavigationChange = false) {
         this.keepAfterNavigationChange = keepAfterNavigationChange;
-        this.subject.next({ type: 'error', text: message });
-    }
+        this.subject.next({ type: 'error', text: this.getMessageString(message) });
+  }
 
-    getMessage(): Observable<any> {
-        return this.subject.asObservable();
-    }
+  getMessage(): Observable<any> {
+    return this.subject.asObservable();
+  }
 
-    clear(): void {
-      this.subject.next();
+  clear(): void {
+    this.subject.next();
+  }
+
+  getMessageString(messageCode:string) {
+    let messageString = '';
+    switch (messageCode) {
+      case 'EALREADYREDEEMED':
+        messageString = 'Codice già riscattato!';
+        break;
+      case 'EEXPIRED':
+        messageString = 'Codice scaduto!';
+        break;
+      case 'ENOTFOUND':
+        messageString = 'Elemento non trovato!';
+        break;
+      case 'EINVALIDCODE':
+        messageString = 'Codice non valido!';
+        break;
+      case 'EEMPTYBODY':
+        messageString = 'Richiesta incompleta!';
+        break;
+      case 'EMETHODNOTALLOWED':
+        messageString = 'Codice già riscattato!';
+        break;
+      case 'EUNAUTHORIZED':
+        messageString = 'Non autorizzato!';
+        break;
+      default:
+        messageString = messageCode;
     }
+    return messageString;
+  }
 }

@@ -6,12 +6,12 @@ md-toolbar {
   .bgimg {
     background-image: url('../assets/images/bkg2.jpg');
     background-size: cover;
-    height: 400px;
+    height: 600px;
 }
 
 .complete_footer {
     clear: both;
-    padding-top: 30px;
+    padding-top: 20px;
     padding-bottom: 30px;
     background-color: #F1EFEB;
     background: #d84579;
@@ -19,11 +19,11 @@ md-toolbar {
   }
 
   .complete_footer a {
-    color: #050505
+    color: white;
   }
   .complete_footer h4 {
     margin-bottom: 30px;
-    color: #fff
+    color: white;
   }
 
   .complete_footer li a {

@@ -1,12 +1,14 @@
 export interface Order {
-  idorder: string;
-  idcustomer: string;
+  idorder: number;
+  idcustomer: number;
   customer: string;
-  idproduct: string;
-  categories: string;
-  provinces: string;
-  quantity: string;
-  amount: string;
+  idproduct: number;
+  productDescription: string;
+  productType: string;
+  categories: string[];
+  provinces: string[];
+  quantity: number;
+  amount: number;
   orderdate: string;
   idstatus: string;
   active: string;
